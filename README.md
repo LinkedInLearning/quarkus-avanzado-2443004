@@ -1,119 +1,57 @@
-# Aplicaciones de línea de comandos con Quarkus y Picocli
+# Configurar y ejecutar tareas periódicas con Quarkus
 
-* Añadimos extension Picocli
+* Añadimos dependencia `quarkus-scheduler` en pom.xml de Sales Service
 ```xml
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-picocli</artifactId>
+    <artifactId>quarkus-scheduler</artifactId>
 </dependency>
 ```
 
-* Creamos un comando
-
+* Añadimos un método que se ejecute cada 0.5 segundos
 ```java
 @ApplicationScoped
-@CommandLine.Command(name = "view", description = "View customer data", mixinStandardHelpOptions = true)
-public class ViewCustomerCommand implements Runnable {
-   Long customerId;
-
-   CustomerService customerService;
-
-   public ViewCustomerCommand(CustomerService customerService) {
-      this.customerService = customerService;
-   }
-
-   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id", defaultValue = "1")
-   public void setCustomerId(Long customerId) {
-      this.customerId = customerId;
-   }
-
-   @Override
-   public void run() {
-      customerService.displayCustomer(customerId);
+public class Scheduler {
+   @Scheduled(every="0.5s")
+   void increment() {
+      System.out.println(Customer.count());
    }
 }
 ```
-* Lanzamos en linea de comandos
+Podemos pasar una expresion 'cron' 
 
-* Creamos un comando para modificar
+* Configuramos en el application properties
+```java
+@Scheduled(every="{kineteco.task}")
+```
+```properties
+kineteco.task=10s
+```
+* Si queremos desactivarlo en produccion
+```properties
+%prod.kineteco.task=off
+```
 
+* Delayed execution
+```java
+@Scheduled(delay = 2, delayUnit = TimeUnit.HOUR)
+@Scheduled(delayed="2h")
+```
+
+* Condiciones
 ```java
 @ApplicationScoped
-@CommandLine.Command(name = "update", description = "Update customer data")
-public class ModifyCustomerEmailCommand implements Runnable {
-
-   Long customerId;
-   String email;
-
-   @Inject
-   CustomerService customerService;
-
-   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id")
-   public void setCustomerId(Long customerId) {
-      this.customerId = customerId;
-   }
-
-   @CommandLine.Option(names = {"-e", "--email"}, description = "Customer email")
-   public void setEmail(String email) {
-      this.email = email;
-   }
-
-   @Override
-   public void run() {
-      customerService.updateEmail(customerId, email);
+public class Scheduler {
+   @Scheduled(every="{kineteco.task}", skipExecutionIf = SkipIfNotDev.class)
+   void increment() {
+      System.out.println(Customer.count());
    }
 }
-
-```
-
-* Modificamos test unitario
-```java
-package com.kineteco;
-
-import io.quarkus.test.junit.main.Launch;
-import io.quarkus.test.junit.main.LaunchResult;
-import io.quarkus.test.junit.main.QuarkusMainTest;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-@QuarkusMainTest
-public class SalesCliTest {
-   @Test
-   @Launch("view")
-   public void testLaunchDefaultView(LaunchResult result) {
-      Assertions.assertTrue(result.getOutput().contains("email='penatibus.et@lectusa.com"));
-   }
-
-   @Test
-   @Launch(value = { "view", "--id=2" } )
-   public void testLaunchIdArgument(LaunchResult result) {
-      Assertions.assertTrue(result.getOutput().contains("email='nibh@ultricesposuere.edu'"));
+@Singleton
+class SkipIfNotDev implements Scheduled.SkipPredicate {
+   public boolean test(ScheduledExecution execution) {
+      return !"dev".equals(ProfileManager.getActiveProfile());
    }
 }
 ```
-* Modificamos SalesCli
-
-```java
-package com.kineteco;
-
-import io.quarkus.picocli.runtime.annotations.TopCommand;
-import picocli.CommandLine;
-
-@TopCommand
-@CommandLine.Command(name = "kineteco",
-      mixinStandardHelpOptions = true,
-      subcommands = {
-            ViewCustomerCommand.class,
-            ModifyCustomerEmailCommand.class
-      })
-public class SalesCliEntryCommand {
-}
-```
-
-* Build y run en linea de comandos
-```java
- ./mvnw clean package
-java -jar target/quarkus-app/quarkus-run.jar view
-java -jar target/quarkus-app/quarkus-run.jar update --id=1 --email=test@test.com
-```
-
+Para persistencia: Quarz
