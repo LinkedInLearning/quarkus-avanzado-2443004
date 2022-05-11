@@ -23,7 +23,6 @@ public class SalesService {
       ProductSale productSale = new ProductSale();
       productSale.sku = product.getSku();
       productSale.name = product.getName();
-      productSale.customer = customer;
       productSale.total = product.getPrice().multiply(new BigDecimal(command.getUnits()));;
       customerSale.productSale.add(new ProductSale());
       customerSale.persist();
