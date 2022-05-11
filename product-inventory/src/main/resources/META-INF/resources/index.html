@@ -23,7 +23,7 @@
             //Now load the data from server
             _refreshPageData();
 
-            //HTTP POST methods for add fruits
+            //HTTP POST methods for add products
             $scope.add = function () {
                 var data = { "sku": $scope.form.sku, "name": $scope.form.name };
 
@@ -38,7 +38,7 @@
             };
 
             /* Private Methods */
-            //HTTP GET- get all fruits collection
+            //HTTP GET- get all products collection
             function _refreshPageData() {
                 $http({
                     method: 'GET',
