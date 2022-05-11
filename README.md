@@ -1,38 +1,56 @@
-# Nombre final del curso
+# Aplicaciones de línea de comandos con Quarkus
 
-Este es el repositorio del curso de LinkedIn Learning `[nombre del curso]`. El curso completo está disponible en [LinkedIn Learning][lil-course-url].
+* Creamos una clase que implemente QuarkusApplication
+* La anotamos con `@QuarkusMain`
+* Arrancamos en modo desarrollo
+```java
+@QuarkusMain
+public class SalesCli implements QuarkusApplication {
 
-![Nombre completo del curso][lil-thumbnail-url] 
+   @Override
+   public int run(String... args) throws Exception {
+      return 0;
+   }
+}
+```
+```bash
+2022-05-10 17:56:01,574 INFO  [io.quarkus] (Quarkus Main Thread) sales-cli 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.8.3.Final) started in 0.147s. 
+2022-05-10 17:56:01,579 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2022-05-10 17:56:01,579 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [cdi]
+2022-05-10 17:56:01,584 INFO  [io.quarkus] (Quarkus Main Thread) sales-cli stopped in 0.000s
+```
 
-Consulta el archivo Readme en la rama main para obtener instrucciones e información actualizadas.
+* Podemos en vez de implementar QuarkusApplication, implementar un main
+Borramos QuarkusMain de Sales Cli
 
-DESCRIPCIÓN DEL CURSO
+Util para poder lanzar una aplicacion desde el editor. Podemos utilizar esto también para lanzar una aplicacion
+en modo debug en el editor y depurar código.
 
-## Instrucciones
+```java
+@QuarkusMain
+public class SalesCliMain {
+   public static void main(String[] args) {
+      Quarkus.run(SalesCli.class, args);
+   }
+}
+```
 
-Este repositorio tiene ramas (branches) para cada uno de los vídeos del curso. Puedes usar el menú emergente de la rama en GitHub para cambiar a una rama específica y echar un vistazo al curso en esa etapa, o puedes añadir `/tree/nombre_de_la_rama` a la URL para ir a la rama a la que quieres acceder.
+* Para que la app no termine
 
-## Ramas
+```java
+ Quarkus.waitForExit();
+```
 
-Las ramas están estructuradas para corresponder a los vídeos del curso. La convención de nomenclatura es Capítulo#_Vídeo#. Por ejemplo, la rama denominada `02_03` corresponde al segundo capítulo y al tercer vídeo de ese capítulo. Algunas ramas tendrán un estado inicial y otro final. Están marcadas con las letras i («inicio») y f («fin»). La branch i tiene el mismo código que al principio del vídeo. La branch f tiene el mismo código que al final del vídeo. La rama master tiene el estado final del código que aparece en el curso.
+* Añadimos test unitario
 
-## Instalación
+```java
+@QuarkusMainTest
+public class SalesCliTest {
 
-1. Para utilizar estos archivos de ejercicios, debes tener descargado lo siguiente:
-   - [software]
-
-2. Clona este repositorio en tu máquina local usando la Terminal (macOS) o CMD (Windows), o una herramienta GUI como SourceTree.
-3. [Instrucciones específicas del curso].
-
-### Docente
-
-**Nombre del docente**
-
-Echa un vistazo a mis otros cursos en [LinkedIn Learning](https://www.linkedin.com/learning/instructors/).
-
-[0]: # (Replace these placeholder URLs with actual course URLs)
-[lil-course-url]: https://www.linkedin.com/learning/building-a-graphql-project-with-react-js
-[lil-thumbnail-url]: https://cdn.lynda.com/course/2875095/2875095-1615224395432-16x9.jpg
-
-[1]: # (End of ES-Instruction ###############################################################################################)
-	
+   @Test
+   @Launch("World")
+   public void testLaunchCommand(LaunchResult result) {
+      Assertions.assertTrue(result.getOutput().contains("sales-cli 1.0.0-SNAPSHOT on JVM"));
+   }
+}
+```

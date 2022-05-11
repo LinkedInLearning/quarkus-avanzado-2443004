@@ -1,10 +1,13 @@
 package com.kineteco.client;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Product {
    private String sku;
+   private String name;
    private String productLine;
+   private BigDecimal price;
 
    public String getSku() {
       return sku;
@@ -22,9 +25,20 @@ public class Product {
       this.productLine = productLine;
    }
 
-   @Override
-   public String toString() {
-      return "Product{" + "sku='" + sku + '\'' + ", productLine='" + productLine + '\'' + '}';
+   public BigDecimal getPrice() {
+      return price;
+   }
+
+   public void setPrice(BigDecimal price) {
+      this.price = price;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Override
@@ -34,11 +48,18 @@ public class Product {
       if (o == null || getClass() != o.getClass())
          return false;
       Product product = (Product) o;
-      return Objects.equals(sku, product.sku) && Objects.equals(productLine, product.productLine);
+      return Objects.equals(sku, product.sku) && Objects.equals(name, product.name) && Objects.equals(productLine,
+            product.productLine) && Objects.equals(price, product.price);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(sku, productLine);
+      return Objects.hash(sku, name, productLine, price);
+   }
+
+   @Override
+   public String toString() {
+      return "Product{" + "sku='" + sku + '\'' + ", name='" + name + '\'' + ", productLine='" + productLine + '\''
+            + ", price=" + price + '}';
    }
 }

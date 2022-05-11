@@ -3,3 +3,5 @@ node_modules
 .tmp
 npm-debug.log
 /.idea/
+/sales-cli/test.mv.db
+/sales-cli/test.trace.db
