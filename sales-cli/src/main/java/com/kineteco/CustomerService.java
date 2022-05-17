@@ -3,12 +3,12 @@ package com.kineteco;
 import com.kineteco.model.Customer;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@Dependent
+@ApplicationScoped
 public class CustomerService {
+   @Transactional
    void displayCustomer(Long id) {
       System.out.println(Customer.findByIdOptional(id));
    }

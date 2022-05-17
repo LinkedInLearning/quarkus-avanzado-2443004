@@ -1,11 +1,17 @@
 package com.kineteco;
 
+import io.quarkus.picocli.runtime.annotations.TopCommand;
+import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
 import picocli.CommandLine;
 
 import javax.inject.Inject;
 
-@CommandLine.Command(name = "kineteco", mixinStandardHelpOptions = true)
+@TopCommand
+@CommandLine.Command(name = "kineteco", mixinStandardHelpOptions = true, subcommands = {
+      ViewCustomerCommand.class,
+      ModifyCustomerEmailCommand.class
+})
 public class SalesCli implements Runnable, QuarkusApplication {
 
    @Inject
@@ -18,6 +24,6 @@ public class SalesCli implements Runnable, QuarkusApplication {
 
    @Override
    public void run() {
-
+      //
    }
 }

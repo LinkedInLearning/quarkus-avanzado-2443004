@@ -2,16 +2,22 @@ package com.kineteco;
 
 import picocli.CommandLine;
 
-@CommandLine.Command
-public class ViewCustomerCommand implements Runnable {
+import javax.enterprise.context.ApplicationScoped;
 
-   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id", defaultValue = "1")
+@ApplicationScoped
+@CommandLine.Command(name = "view", description = "View customer data", mixinStandardHelpOptions = true)
+public class ViewCustomerCommand implements Runnable {
    Long customerId;
 
-   private final CustomerService customerService;
+   CustomerService customerService;
 
    public ViewCustomerCommand(CustomerService customerService) {
       this.customerService = customerService;
+   }
+
+   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id", defaultValue = "1")
+   public void setCustomerId(Long customerId) {
+      this.customerId = customerId;
    }
 
    @Override

@@ -2,19 +2,27 @@ package com.kineteco;
 
 import picocli.CommandLine;
 
-@CommandLine.Command
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+@ApplicationScoped
+@CommandLine.Command(name = "update", description = "Update customer data")
 public class ModifyCustomerEmailCommand implements Runnable {
 
-   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id")
    Long customerId;
-
-   @CommandLine.Option(names = {"-e", "--email"}, description = "Customer email")
    String email;
 
-   private final CustomerService customerService;
+   @Inject
+   CustomerService customerService;
 
-   public ModifyCustomerEmailCommand(CustomerService customerService) {
-      this.customerService = customerService;
+   @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id")
+   public void setCustomerId(Long customerId) {
+      this.customerId = customerId;
+   }
+
+   @CommandLine.Option(names = {"-e", "--email"}, description = "Customer email")
+   public void setEmail(String email) {
+      this.email = email;
    }
 
    @Override

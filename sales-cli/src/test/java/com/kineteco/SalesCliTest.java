@@ -8,10 +8,15 @@ import org.junit.jupiter.api.Test;
 
 @QuarkusMainTest
 public class SalesCliTest {
+   @Test
+   @Launch("view")
+   public void testLaunchDefaultView(LaunchResult result) {
+      Assertions.assertTrue(result.getOutput().contains("email='penatibus.et@lectusa.com"));
+   }
 
    @Test
-   @Launch("World")
-   public void testLaunchCommand(LaunchResult result) {
-      Assertions.assertTrue(result.getOutput().contains("sales-cli 1.0.0-SNAPSHOT on JVM"));
+   @Launch(value = { "view", "--id=2" } )
+   public void testLaunchIdArgument(LaunchResult result) {
+      Assertions.assertTrue(result.getOutput().contains("email='nibh@ultricesposuere.edu'"));
    }
 }
