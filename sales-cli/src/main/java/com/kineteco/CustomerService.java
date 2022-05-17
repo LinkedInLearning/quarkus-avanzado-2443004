@@ -25,5 +25,6 @@ public class CustomerService {
       customer.email = email;
       customer.persist();
       System.out.println("Customer e-mail modified");
+      System.out.println(Customer.findByIdOptional(id));
    }
 }
