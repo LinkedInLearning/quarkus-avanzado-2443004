@@ -9,14 +9,10 @@ import org.junit.jupiter.api.Test;
 @QuarkusMainTest
 public class SalesCliTest {
    @Test
-   @Launch("view")
    public void testLaunchDefaultView(LaunchResult result) {
-      Assertions.assertTrue(result.getOutput().contains("email='penatibus.et@lectusa.com"));
    }
 
    @Test
-   @Launch(value = { "view", "--id=2" } )
    public void testLaunchIdArgument(LaunchResult result) {
-      Assertions.assertTrue(result.getOutput().contains("email='nibh@ultricesposuere.edu'"));
    }
 }
