@@ -10,6 +10,10 @@ import java.util.Optional;
 public class CustomerService {
    @Transactional
    public void displayCustomer(Long id) {
+      if (id == null) {
+         return;
+      }
+
       System.out.println(Customer.findByIdOptional(id));
    }
 
