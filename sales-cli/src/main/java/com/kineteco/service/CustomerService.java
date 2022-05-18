@@ -1,4 +1,4 @@
-package com.kineteco;
+package com.kineteco.service;
 
 import com.kineteco.model.Customer;
 
@@ -9,12 +9,12 @@ import java.util.Optional;
 @ApplicationScoped
 public class CustomerService {
    @Transactional
-   void displayCustomer(Long id) {
+   public void displayCustomer(Long id) {
       System.out.println(Customer.findByIdOptional(id));
    }
 
    @Transactional
-   void updateEmail(Long id, String email) {
+   public void updateEmail(Long id, String email) {
       Optional<Customer> customerOpt = Customer.findByIdOptional(id);
       if (customerOpt.isEmpty()) {
          System.out.println("Unable to find customer");

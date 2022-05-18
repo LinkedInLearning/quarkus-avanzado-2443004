@@ -1,5 +1,6 @@
 package com.kineteco;
 
+import com.kineteco.service.CustomerService;
 import picocli.CommandLine;
 
 import javax.enterprise.context.ApplicationScoped;

@@ -1,5 +1,6 @@
 package com.kineteco;
 
+import com.kineteco.service.CustomerService;
 import picocli.CommandLine;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,8 +13,7 @@ public class ModifyCustomerEmailCommand implements Runnable {
    Long customerId;
    String email;
 
-   @Inject
-   CustomerService customerService;
+   @Inject CustomerService customerService;
 
    @CommandLine.Option(names = {"-i", "--id"}, description = "Customer id")
    public void setCustomerId(Long customerId) {
