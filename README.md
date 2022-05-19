@@ -10,13 +10,18 @@
 
 * Creamos un endpoint rest para visualizar un cliente
 ```java
-   @GET
+
+   @Inject
+    Template customers;
+
+    @GET
     @Path("/display/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public TemplateInstance get(@PathParam("id") Long id) {
-        Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
-        return customers.data("name", name);
-    }
+      Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
+      String name = customer.map(c -> c.name).orElse("Unknown");
+      return customers.data("name", name);
+      }
 ```
 
 * En resources template creamos el customer.txt en `templates`
