@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Reporting</title>
+</head>
+<body>
+<h1>Sales Reporting {date}</h1>
+<table>
+    <tr>
+        <td>Sku</td>
+        <td>Name</td>
+        <td>Price</td>
+    </tr>
+{#for sale in sales}
+        <tr>
+            <td>{sale.sku ?: 'Unknown'}</td>
+            <td>{sale.name ?: 'Unknown'}</td>
+            <td>
+                {#if (sale.total > 500)}
+                    <label>Popular</label>
+                {/if}
+                {sale.total}
+            </td>
+        </tr>
+{/for}
+</table>
+</body>
+</html>

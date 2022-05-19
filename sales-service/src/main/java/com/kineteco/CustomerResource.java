@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.Optional;
 
 @Path("/customers")
 public class CustomerResource {
@@ -33,15 +34,16 @@ public class CustomerResource {
     @Path("/display/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public TemplateInstance get(@PathParam("id") Long id) {
-        String name =
-              Customer.<Customer>findByIdOptional(id).map(c -> c.name).orElse("Unknown");
+        Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
+        String name = customer.map(c -> c.name).orElse("Unknown");
+        String email = customer.map(c -> c.email).orElse("Unknown");
 //        return customers.data("name", name);
-        return Templates.customers(name);
+        return Templates.customers(name, email);
     }
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance customers(String name);
+        public static native TemplateInstance customers(String name, String email);
     }
 
 }
