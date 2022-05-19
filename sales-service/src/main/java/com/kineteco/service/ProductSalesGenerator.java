@@ -23,39 +23,21 @@ public class ProductSalesGenerator {
 
    private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
-   @Location("sales/sales-mail-report")
-   MailTemplate salesReport;
-//   Template salesReport;
-
-   @Inject
-   Mailer mailer;
+   Template salesReport;
 
    @Scheduled(cron="{kineteco.sales}")
    public void generate() {
       List<ProductSale> productSales = ProductSale.listAll();
-      Uni<Void> send = salesReport
-            .to("sales@kineteco.com")
-            .subject("Daily Report").data("sales", productSales)
-            .data("date", LocalDateTime.now().toString())
-            .send();
-
-      send.await().atMost(Duration.ofMinutes(1));
-//      send.await().indefinitely();
       // Generate Report
-//      salesReport
-//            .data("sales", productSales)
-//            .data("date", LocalDateTime.now().toString())
-//            .renderAsync()
-//            .thenAccept(r ->
-//               mailer.send(Mail
-//                     .withHtml("sales@kineteco.com",
-//                           "Daily Reporting", r))
-//            )
-//            .exceptionally(e -> {
-//               LOGGER.error(e);
-//               return null;
-//            });
-
+      salesReport
+            .data("sales", productSales)
+            .data("date", LocalDateTime.now().toString())
+            .renderAsync()
+            .thenAccept(r -> LOGGER.info(r))
+            .exceptionally(e -> {
+               LOGGER.error(e);
+               return null;
+            });
    }
 
 }
