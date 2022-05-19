@@ -47,6 +47,12 @@ public class Scheduler {
       System.out.println(Customer.count());
    }
 }
+
+@Singleton
+class SkipIfNotDev
+
+}
+
 @Singleton
 class SkipIfNotDev implements Scheduled.SkipPredicate {
    public boolean test(ScheduledExecution execution) {
