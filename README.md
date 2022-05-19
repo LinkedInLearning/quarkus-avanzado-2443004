@@ -53,7 +53,7 @@ Template customers;
 ```java
 @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance customers(String name, String email);
+        public static native TemplateInstance customers(String name);
     }
 ```
 
@@ -69,11 +69,9 @@ Template customers;
 <table>
     <tr>
         <td><h3>Name</h3></td>
-        <td><h3>Email</h3></td>
     </tr>
     <tr>
         <td>{name}</td>
-        <td>{email}</td>
     </tr>
 </table>
 </body>
