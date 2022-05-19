@@ -1,8 +1,12 @@
 package com.kineteco;
 
 import com.kineteco.model.Customer;
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,6 +20,7 @@ public class CustomerResource {
 
     private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> customers() {
@@ -25,9 +30,14 @@ public class CustomerResource {
     @GET
     @Path("/display/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String get(@PathParam("id") Long id) {
+    public TemplateInstance get(@PathParam("id") Long id) {
         Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
         String name = customer.map(c -> c.name).orElse("Unknown");
-        return name;
+        return Templates.customers(name);
+    }
+
+    @CheckedTemplate
+    public static class Templates {
+        public static native TemplateInstance customers(String name);
     }
 }
