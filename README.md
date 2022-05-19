@@ -4,165 +4,63 @@
 ```xml
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-resteasy-qute</artifactId>
+    <artifactId>quarkus-mailer</artifactId>
 </dependency>
 ```
 
-* Creamos un endpoint rest para visualizar un cliente
+* Modificamos el envio utilizando la injeccion
+
 ```java
+
+@Inject
+Mailer mailer;
+ReactiveMailer;
+
+ @Location("sales/sales-mail-report")
+MailTemplate salesReport;
+
+Uni<Void> send = salesReport
+      .to("sales@kineteco.com")
+      .subject("Daily Report").data("sales", productSales)
+      .data("date", LocalDateTime.now().toString())
+      .send();
+
+      send.await().atMost(Duration.ofMinutes(1));
+```
+
+* Test
+```java
+@QuarkusTest
+public class ProductSalesGeneratorTest {
+
+   private static final String TO = "sales@kineteco.com";
 
    @Inject
-    Template customers;
+   MockMailbox mailbox;
 
-    @GET
-    @Path("/display/{id}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public TemplateInstance get(@PathParam("id") Long id) {
-      Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
-      String name = customer.map(c -> c.name).orElse("Unknown");
-      return customers.data("name", name);
-      }
-```
+   @Inject
+   ProductSalesGenerator productSalesGenerator;
 
-* En resources template creamos el customer.txt en `templates`
-```text
-{name}
-```
-* Lo convertimos a html
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{name}</title>
-</head>
-<body>
-<h1>{name}</h1>
-</body>
-</html>
-```
-
-* Injectamos la template
-```html
-@Inject
-Template customers;
-```
-
-* Hacemos una template TypeSafe Dossier CustomerResource
-
-```java
-@CheckedTemplate
-    public static class Templates {
-        public static native TemplateInstance customers(String name);
-    }
-```
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{name}</title>
-</head>
-<body>
-<h1>Customer Information</h1>
-<table>
-    <tr>
-        <td><h3>Name</h3></td>
-    </tr>
-    <tr>
-        <td>{name}</td>
-    </tr>
-</table>
-</body>
-</html>
-```
-
-```java
-@GET
-@Path("/display/{id}")
-@Produces(MediaType.TEXT_PLAIN)
-public TemplateInstance get(@PathParam("id") Long id) {
-      Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
-      String name = customer.map(c -> c.name).orElse("Unknown");
-      String email = customer.map(c -> c.email).orElse("Unknown");
-      //        return customers.data("name", name);
-      return Templates.customers(name, email);
-      }
-```
-
-* Creamos un report de sales sales-mail-report
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Sales Reporting</title>
-</head>
-<body>
-<h1>Sales Reporting {date}</h1>
-<table>
-    <tr>
-        <td>Sku</td>
-        <td>Name</td>
-        <td>Price</td>
-    </tr>
-{#for sale in sales}
-        <tr>
-            <td>{sale.sku ?: 'Unknown'}</td>
-            <td>{sale.name ?: 'Unknown'}</td>
-            <td>
-                {#if (sale.total > 500)}
-                    <label>Popular</label>
-                {/if}
-                {sale.total}
-            </td>
-        </tr>
-{/for}
-</table>
-</body>
-</html>
-```
-
-* SalesGenerator
-```java
-package com.kineteco.service;
-
-import com.kineteco.CustomerResource;
-import com.kineteco.model.ProductSale;
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
-import io.quarkus.scheduler.Scheduled;
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.function.Function;
-
-@ApplicationScoped
-public class ProductSalesGenerator {
-
-   private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
-
-   @Location("sales/sales-mail-report")
-   Template salesReport;
-
-   @Scheduled(cron="{kineteco.sales}")
-   public void generate() {
-      List<ProductSale> productSales = ProductSale.listAll();
-      salesReport
-            .data("sales", productSales)
-            .data("date", LocalDateTime.now().toString())
-            .renderAsync()
-            .thenAccept(r -> LOGGER.info(r))
-            .exceptionally(e -> {
-               LOGGER.error(e);
-               return null;
-            });
+   @BeforeEach
+   void init() {
+      mailbox.clear();
    }
 
-}
+   @Test
+   public void testReportingMail() throws Exception {
+      productSalesGenerator.generate();
 
+      List<Mail> sent = mailbox.getMessagesSentTo(TO);
+      assertThat(sent).hasSize(1);
+      Mail actual = sent.get(0);
+      assertThat(actual.getSubject()).isEqualTo("Daily Report");
+      assertThat(actual.getHtml()).contains("Sales Reporting");
+
+      assertThat(mailbox.getTotalMessagesSent()).isEqualTo(1);
+   }
+}
 ```
+
+
+Te invito a que vayas a la documentación de Quarkus para configurar GMAIL, 
+las opciones SMTP y credenciales que necesite tu aplication Quarkus. 
