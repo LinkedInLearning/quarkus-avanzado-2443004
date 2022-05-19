@@ -19,7 +19,7 @@
     }
 ```
 
-* En resources template creamos el customer.txt
+* En resources template creamos el customer.txt en `templates`
 ```text
 {name}
 ```
