@@ -23,6 +23,7 @@ public class ProductSalesGenerator {
 
    private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
+   @Location("sales/sales-mail-report")
    Template salesReport;
 
    @Scheduled(cron="{kineteco.sales}")
