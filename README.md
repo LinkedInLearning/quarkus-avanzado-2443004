@@ -1,66 +1,29 @@
-# Utilización de Qute para visualizar reportings periódicos con Quarkus
+# Medir la cobertura de tests en Quarkus
 
-* Añadimos dependencia `quarkus-resteasy-qute` en pom.xml de Sales Service
+* Añadimos dependencia `quarkus-jococo` en pom.xml 
 ```xml
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-mailer</artifactId>
+    <artifactId>quarkus-jacoco</artifactId>
+    <scope>test</scope>
 </dependency>
 ```
 
-* Modificamos el envio utilizando la injeccion
+* mvn clean verify y mirar en target
 
-```java
-
-@Inject
-Mailer mailer;
-ReactiveMailer;
-
- @Location("sales/sales-mail-report")
-MailTemplate salesReport;
-
-Uni<Void> send = salesReport
-      .to("sales@kineteco.com")
-      .subject("Daily Report").data("sales", productSales)
-      .data("date", LocalDateTime.now().toString())
-      .send();
-
-      send.await().atMost(Duration.ofMinutes(1));
+* Configuramos 
+```properties
+quarkus.jacoco.title=Sales Service
+quarkus.jacoco.footer=Kineteco
 ```
 
-* Test
-```java
-@QuarkusTest
-public class ProductSalesGeneratorTest {
+No hemos tenido que añadir nada especial en el pom.xml
 
-   private static final String TO = "sales@kineteco.com";
+Para terminar te diré que para cambiar los parametros por defecto de los ratios,
+incluir coverage de los test de integracion nativos o incluir tests que no
+lleven las anotaciones de test de Quarkus, tendràs que añadir configuracion adicional
+en el pom.xml y encontrarás toda la documentacion en la documentación de Quarkus.
+Recuerda que una buena covertura de test no significa que la aplicación esté bien
+testeada, sin embargo es una buena métrica a tener en cuenta desde el inicio.
 
-   @Inject
-   MockMailbox mailbox;
-
-   @Inject
-   ProductSalesGenerator productSalesGenerator;
-
-   @BeforeEach
-   void init() {
-      mailbox.clear();
-   }
-
-   @Test
-   public void testReportingMail() throws Exception {
-      productSalesGenerator.generate();
-
-      List<Mail> sent = mailbox.getMessagesSentTo(TO);
-      assertThat(sent).hasSize(1);
-      Mail actual = sent.get(0);
-      assertThat(actual.getSubject()).isEqualTo("Daily Report");
-      assertThat(actual.getHtml()).contains("Sales Reporting");
-
-      assertThat(mailbox.getTotalMessagesSent()).isEqualTo(1);
-   }
-}
-```
-
-
-Te invito a que vayas a la documentación de Quarkus para configurar GMAIL, 
-las opciones SMTP y credenciales que necesite tu aplication Quarkus. 
+ 

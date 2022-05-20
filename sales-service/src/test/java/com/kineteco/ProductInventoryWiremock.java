@@ -4,6 +4,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.Map;
@@ -97,6 +99,15 @@ public class ProductInventoryWiremock implements QuarkusTestResourceLifecycleMan
    }
 
    static void stubCircuitBreaker() {
+
+      JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+      objectBuilder
+            .add("sku", "circuitBreaker")
+            .add("productLine", "DELUXE")
+            .add("name", "circuitBreaker")
+            .add("price", 12.8);
+      String productJson = objectBuilder.build().toString();
+
       // Circuit breaker scenario
       stubFor(get(urlEqualTo("/products/circuitBreaker"))
             .inScenario("circuitBreaker")
@@ -104,7 +115,7 @@ public class ProductInventoryWiremock implements QuarkusTestResourceLifecycleMan
             .willSetStateTo("timeout-1")
             .willReturn(aResponse()
                   .withHeader("Content-Type", "application/json")
-                  .withBody("{\"sku\": \"circuitBreaker\", \"productLine\": \"DELUXE\"}")
+                  .withBody(productJson)
             ));
 
       // Da un timeout 1 vez
@@ -114,7 +125,7 @@ public class ProductInventoryWiremock implements QuarkusTestResourceLifecycleMan
             .willSetStateTo("timeout-2")
             .willReturn(aResponse()
                   .withHeader("Content-Type", "application/json")
-                  .withFixedDelay(150)
+                  .withFixedDelay(200)
             ));
 
       // Da un timeout 2 vez
@@ -124,7 +135,7 @@ public class ProductInventoryWiremock implements QuarkusTestResourceLifecycleMan
             .willSetStateTo("success")
             .willReturn(aResponse()
                   .withHeader("Content-Type", "application/json")
-                  .withFixedDelay(150)
+                  .withFixedDelay(200)
             ));
 
       stubFor(get(urlEqualTo("/products/circuitBreaker"))
@@ -132,15 +143,22 @@ public class ProductInventoryWiremock implements QuarkusTestResourceLifecycleMan
             .whenScenarioStateIs("success")
             .willReturn(aResponse()
                   .withHeader("Content-Type", "application/json")
-                  .withBody("{\"sku\": \"circuitBreaker\", \"productLine\": \"DELUXE\"}")
+                  .withBody(productJson)
             ));
    }
 
    static void stubSecured() {
+      JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+      objectBuilder
+            .add("sku", "secured")
+            .add("productLine", "DELUXE")
+            .add("name", "SECURED")
+            .add("price", 12.8);
+
       stubFor(get(urlEqualTo("/products/secured"))
             .willReturn(aResponse()
                   .withHeader("Content-Type", "application/json")
-                  .withBody("{\"sku\": \"secured\", \"productLine\": \"DELUXE\"}")
+                  .withBody(objectBuilder.build().toString())
             ));
    }
 

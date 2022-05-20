@@ -20,7 +20,7 @@ public class SalesResourceTest {
    @Test
    public void testHealthEndpoint() {
       given()
-            .when().get("/sales")
+            .when().get("/sales/health")
             .then()
             .statusCode(200)
             .body(is("Sales Service is up!!"));
@@ -62,8 +62,6 @@ public class SalesResourceTest {
             .body(is("true"));;
    }
 
-
-
    @Test
    public void testAvailabilityFallbackTimeoutLessThanTwoUnits() {
       given()
@@ -87,11 +85,11 @@ public class SalesResourceTest {
    public void testDeluxeCommandCircuitBreaker() {
       RequestSpecification request = given()
             .body("{\"sku\": \"circuitBreaker\", "
-                  + "\"customerId\": \"customer123\", "
+                  + "\"customerId\": \"c1\", "
                   + "\"units\": 50}")
             .contentType(ContentType.JSON).when();
 
-      request.post("/sales").then().statusCode(Response.Status.CREATED.getStatusCode());
+      request.post("/sales").then().statusCode(Response.Status.GATEWAY_TIMEOUT.getStatusCode());
       request.post("/sales").then().statusCode(Response.Status.GATEWAY_TIMEOUT.getStatusCode());
       request.post("/sales").then().statusCode(Response.Status.GATEWAY_TIMEOUT.getStatusCode());
       request.post("/sales").then().statusCode(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
@@ -99,7 +97,7 @@ public class SalesResourceTest {
 
       wait1Second();
 
-      request.post("/sales").then().statusCode(Response.Status.CREATED.getStatusCode());
+      request.post("/sales").then().statusCode(Response.Status.OK.getStatusCode());
    }
 
    private void wait1Second() {

@@ -14,17 +14,20 @@ import java.util.ArrayList;
 @ApplicationScoped
 public class SalesService {
 
-   @Transactional
    public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
       Customer customer = Customer.findByCustomerId(command.getCustomerId());
       CustomerSale customerSale = new CustomerSale();
       customerSale.customer = customer;
       customerSale.productSale = new ArrayList<>();
+      customerSale.persist();
+
       ProductSale productSale = new ProductSale();
       productSale.sku = product.getSku();
       productSale.name = product.getName();
-      productSale.total = product.getPrice().multiply(new BigDecimal(command.getUnits()));;
-      customerSale.productSale.add(new ProductSale());
+      productSale.total = product.getPrice().multiply(new BigDecimal(command.getUnits()));
+      productSale.persist();
+
+      customerSale.productSale.add(productSale);
       customerSale.persist();
       return customerSale;
    }

@@ -29,6 +29,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class SalesResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Timeout(value = 100)
+    @Timeout(value = 200)
     @CircuitBreaker(
           requestVolumeThreshold=3,
           failureRatio = 0.66,
@@ -83,6 +84,7 @@ public class SalesResource {
     )
     @Fallback(value = SalesServiceFallbackHandler.class, skipOn = ResteasyViolationException.class)
     @Bulkhead(value= 1)
+    @Transactional
     public Response createDeluxeCommand(@Valid CustomerCommand command) {
         Product product = productInventoryServiceClient.inventory(command.getSku());
 
