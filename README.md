@@ -27,3 +27,28 @@ public class SalesServiceGraphQLResource {
 Hacemos una query con el id
 Intentamos hacer uno mal
 Cambiamos el tipo de dato de salida
+
+* Test
+```java
+@Test
+   public void allCustomerSales() {
+      String requestBody =
+            "{\"query\":" +
+                     "\"" +
+                        "{" +
+                           " allCustomerSales  {" +
+                           " id" +
+                        "}" +
+                     "}" +
+                  "\"" +
+                  "}";
+
+      given()
+            .body(requestBody)
+            .post("/graphql/")
+            .then()
+            .contentType(ContentType.JSON)
+            .body("data.allCustomerSales.size()", is(3))
+            .statusCode(200);
+   }
+```

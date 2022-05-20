@@ -1,4 +1,4 @@
-package com.kineteco;
+package com.kineteco.rest;
 
 import io.quarkus.security.Authenticated;
 

@@ -1,4 +1,4 @@
-package com.kineteco;
+package com.kineteco.rest;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.runtime.annotations.RegisterForReflection;

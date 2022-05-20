@@ -1,12 +1,10 @@
-package com.kineteco;
+package com.kineteco.rest;
 
 import com.kineteco.model.Customer;
 import io.quarkus.qute.CheckedTemplate;
-import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

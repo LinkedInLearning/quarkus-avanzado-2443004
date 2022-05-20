@@ -1,13 +1,12 @@
 package com.kineteco.service;
 
-import com.kineteco.CustomerCommand;
+import com.kineteco.rest.CustomerCommand;
 import com.kineteco.client.Product;
 import com.kineteco.model.Customer;
 import com.kineteco.model.CustomerSale;
 import com.kineteco.model.ProductSale;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 

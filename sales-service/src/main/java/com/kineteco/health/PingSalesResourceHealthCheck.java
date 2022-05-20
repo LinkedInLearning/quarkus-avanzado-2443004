@@ -1,6 +1,6 @@
 package com.kineteco.health;
 
-import com.kineteco.SalesResource;
+import com.kineteco.rest.SalesResource;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;

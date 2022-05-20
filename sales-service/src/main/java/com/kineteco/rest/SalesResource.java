@@ -1,10 +1,9 @@
-package com.kineteco;
+package com.kineteco.rest;
 
 import com.kineteco.client.Product;
 import com.kineteco.client.ProductInventoryServiceClient;
 import com.kineteco.fallbacks.SalesServiceFallbackHandler;
 import com.kineteco.model.CustomerSale;
-import com.kineteco.model.ProductSale;
 import com.kineteco.service.SalesService;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -29,7 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
