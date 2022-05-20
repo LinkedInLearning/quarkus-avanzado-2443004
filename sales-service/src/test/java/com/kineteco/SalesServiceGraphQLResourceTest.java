@@ -16,5 +16,23 @@ public class SalesServiceGraphQLResourceTest {
 
    @Test
    public void allCustomerSales() {
+      String requestBody =
+            "{\"query\":" +
+                  "\"" +
+                  "{" +
+                  " allCustomerSales  {" +
+                  " id" +
+                  "}" +
+                  "}" +
+                  "\"" +
+                  "}";
+
+      given()
+            .body(requestBody)
+            .post("/graphql/")
+            .then()
+            .contentType(ContentType.JSON)
+            .body("data.allCustomerSales.size()", is(3))
+            .statusCode(200);
    }
 }
