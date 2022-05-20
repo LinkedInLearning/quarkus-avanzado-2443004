@@ -1,29 +1,29 @@
-# Medir la cobertura de tests en Quarkus
+# Implementar una primera API con GraphQL y Quarkus
 
-* Añadimos dependencia `quarkus-jococo` en pom.xml 
+* Añadimos dependencia `quarkus-smallrye-graphql` en pom.xml 
 ```xml
 <dependency>
     <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-jacoco</artifactId>
-    <scope>test</scope>
+    <artifactId>quarkus-smallrye-graphql</artifactId>
 </dependency>
 ```
 
-* mvn clean verify y mirar en target
+* Creamos un primer endpoint graphql
 
-* Configuramos 
-```properties
-quarkus.jacoco.title=Sales Service
-quarkus.jacoco.footer=Kineteco
+```java
+@GraphQLApi
+public class SalesServiceGraphQLResource {
+
+   @Query("allCustomerSales")
+   @Description("Get all product sales")
+   public List<CustomerSale> getAllCustomerSales() {
+      return CustomerSale.listAll();
+   }
+}
 ```
-
-No hemos tenido que añadir nada especial en el pom.xml
-
-Para terminar te diré que para cambiar los parametros por defecto de los ratios,
-incluir coverage de los test de integracion nativos o incluir tests que no
-lleven las anotaciones de test de Quarkus, tendràs que añadir configuracion adicional
-en el pom.xml y encontrarás toda la documentacion en la documentación de Quarkus.
-Recuerda que una buena covertura de test no significa que la aplicación esté bien
-testeada, sin embargo es una buena métrica a tener en cuenta desde el inicio.
-
  
+* En el Dev UI
+
+Hacemos una query con el id
+Intentamos hacer uno mal
+Cambiamos el tipo de dato de salida
