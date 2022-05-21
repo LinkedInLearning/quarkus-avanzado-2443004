@@ -1,7 +1,7 @@
 # Crear una API GraphQL de modificación de datos con Quarkus
 
-En este video vamos a aprender a crear busquedas con parametros, a evitar multiples llamadas para buscar un conjunto de datos ademas de cómo extender un API existente sin afectar el cliente.
-
+En este video aprenderemos a crear un API de modificacion de datos, además de 
+la utilizacion de Subscription para leer los datos desde un websocket.
 
 ```json
 mutation create {
@@ -72,3 +72,7 @@ mutation deleteCustomer {
       }
       
 ```
+
+Recuerda que l integracion con GrapqhQL está en activo desarrollo y que las las funcionalidaes
+y utilidades van mejorando. Te invito a estar al tanto de las últimas modifiaciones de GraphQL
+en los foros y las versiones de Quarkus.
