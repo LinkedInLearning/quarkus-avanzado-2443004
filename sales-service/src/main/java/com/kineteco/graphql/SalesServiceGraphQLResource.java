@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SalesServiceGraphQLResource {
 
-   BroadcastProcessor<Customer> processor = BroadcastProcessor.create();
-
    @Query("allCustomerSales")
    @Description("Get all product sales")
    public List<CustomerSale> sales() {
@@ -44,28 +42,4 @@ public class SalesServiceGraphQLResource {
             .collect(Collectors.toList());
    }
 
-   @Mutation
-   @Transactional
-   public Customer createCustomer(Customer customer) {
-      if (customer.id == null) {
-         customer.persist();
-         processor.onNext(customer);
-      } else {
-         Customer existing = Customer.findById(customer.id);
-         existing.name = customer.name;
-         existing.email = customer.email;
-      }
-      return customer;
-   }
-
-   @Mutation
-   @Transactional
-   public boolean deleteCustomer(@Name("id") Long id) {
-      return Customer.deleteById(id);
-   }
-
-   @Subscription
-   public Multi<Customer> customerCreation(){
-      return processor;
-   }
 }
