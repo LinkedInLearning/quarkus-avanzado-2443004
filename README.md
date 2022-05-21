@@ -1,54 +1,54 @@
-# Implementar una primera API con GraphQL y Quarkus
+# Crear una API GraphQL de búsqueda de datos Imperativa y Reactiva con Quarkus
 
-* Añadimos dependencia `quarkus-smallrye-graphql` en pom.xml 
-```xml
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-smallrye-graphql</artifactId>
-</dependency>
-```
-
-* Creamos un primer endpoint graphql
-
+* Get customer
 ```java
-@GraphQLApi
-public class SalesServiceGraphQLResource {
-
-   @Query("allCustomerSales")
-   @Description("Get all product sales")
-   public List<CustomerSale> getAllCustomerSales() {
-      return CustomerSale.listAll();
+ @Query("getCustomer")
+   @Description("Get a Customer")
+   public Customer getCustomer(@Name("customerId") String customerId) {
+      return Customer.findByCustomerId(customerId);
    }
+```
+* Query in Dev UI a customer
+
+```json
+query{
+  getCustomer(customerId: "c1") {
+  	 name, customerId
+  }
 }
 ```
- 
-* En el Dev UI
 
-Hacemos una query con el id
-Intentamos hacer uno mal
-Cambiamos el tipo de dato de salida
+* Query in Dev UI 2 customers
+```json
+query getCustomers {
+  customer0: getCustomer(customerId: "c1") {
+  	 customerId
+  }
+    customer1: getCustomer(customerId: "c2") {
+    name, customerId
+    }
+}
+```
+5* En reactivo
 
-* Test
+Lo suyo seria utilizar el acceso a base de datos reactivo, con hibernate
+panache reactive. te invito a que vayas a ver la formacion quarkus esencial.
+Podemos usar la anotacion @DefaultValue
 ```java
-@Test
-   public void allCustomerSales() {
-      String requestBody =
-            "{\"query\":" +
-                     "\"" +
-                        "{" +
-                           " allCustomerSales  {" +
-                           " id" +
-                        "}" +
-                     "}" +
-                  "\"" +
-                  "}";
+@Query("getCustomer")
+   @Description("Get a Customer")
+   public Uni<Customer> getCustomer(@Name("customerId") String customerId) {
+      return Uni.createFrom().item(Customer.findByCustomerId(customerId));
+   }
+```
 
-      given()
-            .body(requestBody)
-            .post("/graphql/")
-            .then()
-            .contentType(ContentType.JSON)
-            .body("data.allCustomerSales.size()", is(3))
-            .statusCode(200);
+* Extendemos el API usando source
+```java
+public List<ProductSale> productSales(@Source Customer customer) {
+       return CustomerSale.find("customer.customerId", customer.customerId)
+            .<CustomerSale>list().stream()
+            .map(cs -> cs.productSale)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
    }
 ```
