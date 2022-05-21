@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,13 @@ public class CustomerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> customers() {
         return Customer.listAll();
+    }
+
+    @GET
+    @Path("/{customerId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Customer get(@PathParam("customerId") String customerId) {
+        return Customer.findByCustomerId(customerId);
     }
 
     @GET
