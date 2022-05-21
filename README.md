@@ -1,8 +1,10 @@
 # Crear una API GraphQL de búsqueda de datos Imperativa y Reactiva con Quarkus
 
+En este video vamos a aprender a crear busquedas con parametros, a evitar multiples llamadas para buscar un conjunto de datos ademas de cómo extender un API existente sin afectar el cliente.
+\
 * Get customer
 ```java
- @Query("getCustomer")
+   @Query("getCustomer")
    @Description("Get a Customer")
    public Customer getCustomer(@Name("customerId") String customerId) {
       return Customer.findByCustomerId(customerId);
@@ -20,6 +22,7 @@ query{
 
 * Query in Dev UI 2 customers
 ```json
+
 query getCustomers {
   customer0: getCustomer(customerId: "c1") {
   	 customerId
@@ -28,6 +31,7 @@ query getCustomers {
     name, customerId
     }
 }
+
 ```
 5* En reactivo
 
@@ -35,9 +39,9 @@ Lo suyo seria utilizar el acceso a base de datos reactivo, con hibernate
 panache reactive. te invito a que vayas a ver la formacion quarkus esencial.
 Podemos usar la anotacion @DefaultValue
 ```java
-@Query("getCustomer")
+  @Query("getCustomerReactive")
    @Description("Get a Customer")
-   public Uni<Customer> getCustomer(@Name("customerId") String customerId) {
+   public Uni<Customer> getCustomerReactive(@Name("customerId") String customerId) {
       return Uni.createFrom().item(Customer.findByCustomerId(customerId));
    }
 ```
@@ -52,3 +56,6 @@ public List<ProductSale> productSales(@Source Customer customer) {
             .collect(Collectors.toList());
    }
 ```
+
+@Source te servira también para poder hacer llamadas en batch. 
+No dudes en ir a la documentacion de Quarkus y GraphQL para profundizar en la creación de busquedas para exponer APIs de busqueda de datos eficientes.
