@@ -1,61 +1,74 @@
-# Crear una API GraphQL de búsqueda de datos Imperativa y Reactiva con Quarkus
+# Crear una API GraphQL de modificación de datos con Quarkus
 
 En este video vamos a aprender a crear busquedas con parametros, a evitar multiples llamadas para buscar un conjunto de datos ademas de cómo extender un API existente sin afectar el cliente.
-\
-* Get customer
-```java
-   @Query("getCustomer")
-   @Description("Get a Customer")
-   public Customer getCustomer(@Name("customerId") String customerId) {
-      return Customer.findByCustomerId(customerId);
-   }
-```
-* Query in Dev UI a customer
+
 
 ```json
-query{
-  getCustomer(customerId: "c1") {
-  	 name, customerId
-  }
+mutation create {
+      createCustomer (customer: {
+        customerId: "c4",
+        name: "Abel Rodriguez",
+        email: "arodriguez.82@gmail.com"
+      }) {
+      id
+    }
 }
-```
-
-* Query in Dev UI 2 customers
-```json
-
-query getCustomers {
-  customer0: getCustomer(customerId: "c1") {
-  	 customerId
-  }
-    customer1: getCustomer(customerId: "c2") {
-    name, customerId
+mutation update {
+    createCustomer (customer: {
+        id:1
+        customerId: "c4",
+        name: "William Butfrozen",
+        email: "william.butfrozen@kineteco.com"
+        }) {
+    id
     }
 }
 
-```
-5* En reactivo
+query getCustomer {
+    getCustomer(customerId:"c4") {
+            id,
+            name,
+            email,
+            customerId
+        }
+}
 
-Lo suyo seria utilizar el acceso a base de datos reactivo, con hibernate
-panache reactive. te invito a que vayas a ver la formacion quarkus esencial.
-Podemos usar la anotacion @DefaultValue
+mutation deleteCustomer {
+  deleteCustomer(id:1)
+}
+```
+
+* Codigo Java 2 métodos
+
 ```java
-  @Query("getCustomerReactive")
-   @Description("Get a Customer")
-   public Uni<Customer> getCustomerReactive(@Name("customerId") String customerId) {
-      return Uni.createFrom().item(Customer.findByCustomerId(customerId));
+ @Mutation
+   @Transactional
+   public Customer createCustomer(Customer customer) {
+      if (customer.id == null) {
+         customer.persist();
+      } else {
+         Customer existing = Customer.findById(customer.id);
+         existing.name = customer.name;
+         existing.email = customer.email;
+      }
+      return customer;
+   }
+
+   @Mutation
+   @Transactional
+   public boolean deleteCustomer(@Name("id") Long id) {
+      return Customer.deleteById(id);
    }
 ```
 
-* Extendemos el API usando source
-```java
-public List<ProductSale> productSales(@Source Customer customer) {
-       return CustomerSale.find("customer.customerId", customer.customerId)
-            .<CustomerSale>list().stream()
-            .map(cs -> cs.productSale)
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-   }
-```
+* Experimental: Subscription
 
-@Source te servira también para poder hacer llamadas en batch. 
-No dudes en ir a la documentacion de Quarkus y GraphQL para profundizar en la creación de busquedas para exponer APIs de busqueda de datos eficientes.
+```java
+ BroadcastProcessor<Customer> processor = BroadcastProcessor.create();
+
+ @Subscription
+   public Multi<Customer> customerCreation(){
+      return processor;
+      }
+      
+```

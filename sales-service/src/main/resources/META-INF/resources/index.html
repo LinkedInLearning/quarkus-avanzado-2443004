@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customers</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+
+    <style>
+        .page-title {
+            font-size: xx-large;
+        }
+
+        .progress {
+            background-color: firebrick;
+        }
+
+        .progress-bar {
+            background: dodgerblue;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="row">
+    <div class="col"><h1 class="page-title">Kineteco :: Customers</h1></div>
+</div>
+</div>
+<div class="container container-cards-pf">
+    <div class="row row-cards-pf">
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card-pf card-pf-view card-pf-view-select">
+                <h2 class="card-pf-title">
+                    <i class="fa fa-list"></i> Customers
+                </h2>
+                <div class="card-pf-body">
+                    <div id="customers">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.11/c3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var host = window.location.host;
+        var request = `{
+            "query" : "subscription customerCreation \{customerCreation \{id customerId name email\}\}","operationName": "customerCreation"\}
+           }`;
+
+        var top = new WebSocket("ws://" + host + "/graphql");
+        top.onopen = function(event) {
+            top.send(request);
+        };
+
+        top.onmessage = function (event) {
+            updateCustomer(event.data);
+        };
+    });
+
+
+    function updateCustomer(data) {
+        var graphqlData = JSON.parse(data);
+        var customer = graphqlData.data.customerCreation;
+        $("#customers").append($("<p>" + customer.name + " [" + customer.id + "]</p>"))
+    }
+
+</script>
+</body>
+</html>
