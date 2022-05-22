@@ -41,6 +41,11 @@ mutation deleteCustomer {
 * Codigo Java 2 métodos
 
 ```java
+  public Customer createCustomer(Customer customer) {
+      customer.persist();
+      return customer;
+   }
+   
  @Mutation
    @Transactional
    public Customer createCustomer(Customer customer) {
