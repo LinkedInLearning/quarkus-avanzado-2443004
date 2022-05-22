@@ -1,6 +1,6 @@
 package com.kineteco;
 
-public class ModifyCustomerEmailCommand {
+public class ModifyCustomerEmailCommand  {
 
 }
 
