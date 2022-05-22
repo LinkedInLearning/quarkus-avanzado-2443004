@@ -4,15 +4,16 @@ En este video aprenderemos a crear un API de modificacion de datos, además de
 la utilizacion de Subscription para leer los datos desde un websocket.
 
 ```json
-mutation create {
-      createCustomer (customer: {
-        customerId: "c4",
-        name: "Abel Rodriguez",
-        email: "arodriguez.82@gmail.com"
-      }) {
-      id
-    }
+mutation createCustomer {
+  createCustomer (customer: {
+    customerId: "c4",
+    name: "William Rodriguez",
+    email: "wrodriguez@exotech.com"
+  }) {
+	  id
+	}
 }
+
 mutation update {
     createCustomer (customer: {
         id:1
