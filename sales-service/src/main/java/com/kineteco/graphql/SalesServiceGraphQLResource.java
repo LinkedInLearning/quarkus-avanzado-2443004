@@ -33,7 +33,14 @@ public class SalesServiceGraphQLResource {
    @Query("getCustomer")
    @Description("Get a Customer")
    public Customer getCustomer(@Name("customerId") String customerId) {
-      return Customer.findByCustomerId(customerId);
+      return Customer.findByCustomerId(customerId)
+            .orElseThrow(() -> new CustomerNotFoundException());
+   }
+
+   @Query("getCustomerById")
+   @Description("Get a Customer by Id")
+   public Customer getCustomerById(Long id) {
+      return Customer.findById(id);
    }
 
    public List<ProductSale> productSales(@Source Customer customer) {
@@ -46,14 +53,16 @@ public class SalesServiceGraphQLResource {
 
    @Mutation
    @Transactional
-   public Customer createCustomer(Customer customer) {
+   public Customer createOrUpdateCustomer(Customer customer) {
       if (customer.id == null) {
          customer.persist();
          processor.onNext(customer);
       } else {
-         Customer existing = Customer.findById(customer.id);
+         Customer existing = Customer.<Customer>findByIdOptional(customer.id)
+               .orElseThrow(() -> new CustomerNotFoundException());
          existing.name = customer.name;
          existing.email = customer.email;
+         existing.persist();
       }
       return customer;
    }

@@ -1,78 +1,134 @@
-# Crear una API GraphQL de modificación de datos con Quarkus
+# Consumir una API GraphQL con el cliente GraphQL de Quarkus
+En este video vamos a aprender a consumir un API GraphQL utlizando el cliente java
+además de cómo gestionar los posibles errores del API.
 
-En este video aprenderemos a crear un API de modificacion de datos, además de 
-la utilizacion de Subscription para leer los datos desde un websocket.
+* Extension
+```xml
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-smallrye-graphql-client</artifactId>
+</dependency> 
+```
+* Configurar
+```properties
+quarkus.smallrye-graphql-client.customers.url=http://localhost:8280/graphql
+```
 
-```json
-mutation create {
-      createCustomer (customer: {
-        customerId: "c4",
-        name: "Abel Rodriguez",
-        email: "arodriguez.82@gmail.com"
-      }) {
-      id
-    }
-}
-mutation update {
-    createCustomer (customer: {
-        id:1
-        customerId: "c4",
-        name: "William Butfrozen",
-        email: "william.butfrozen@kineteco.com"
-        }) {
-    id
-    }
-}
+* Crear interfaz
+```java
+@GraphQLClientApi(configKey = "customers")
+public interface CustomerClient {
 
-query getCustomer {
-    getCustomer(customerId:"c4") {
-            id,
-            name,
-            email,
-            customerId
-        }
-}
-
-mutation deleteCustomer {
-  deleteCustomer(id:1)
+   @Query(value="getCustomer")
+   Customer customerDetail(String customerId);
 }
 ```
 
-* Codigo Java 2 métodos
-
+* Utilizar cliente 
 ```java
- @Mutation
-   @Transactional
-   public Customer createCustomer(Customer customer) {
-      if (customer.id == null) {
-         customer.persist();
-      } else {
-         Customer existing = Customer.findById(customer.id);
-         existing.name = customer.name;
-         existing.email = customer.email;
-      }
-      return customer;
-   }
+@ApplicationScoped
+public class CustomerService {
 
-   @Mutation
-   @Transactional
-   public boolean deleteCustomer(@Name("id") Long id) {
-      return Customer.deleteById(id);
+   @Inject
+   CustomerClient customerClient;
+
+   public void displayCustomer(String customerId) {
+      System.out.println(customerClient.customerDetail(customerId));
    }
 ```
 
-* Experimental: Subscription
-
-```java
- BroadcastProcessor<Customer> processor = BroadcastProcessor.create();
-
- @Subscription
-   public Multi<Customer> customerCreation(){
-      return processor;
-      }
-      
+* Command line
+```
+view --id=c1 
+view --id=c32 
 ```
 
-Recuerda que l integracion con GrapqhQL está en activo desarrollo y que las las funcionalidaes
-y utilidades van mejorando. Te invito a estar al tanto de las últimas modifiaciones de GraphQL
-en los foros y las versiones de Quarkus.
+* Modificacion
+```java
+public interface CustomerClient {
+   @Mutation(value="createOrUpdateCustomer")
+   Customer updateEmail(Customer customer);
+}
+```
+
+````java
+public void updateEmail(String id, String email) {
+      Customer customer = customerClient.customerDetail(id);
+      customer.email = email;
+      Customer updated = customerClient.updateEmail(customer);
+      System.out.println("Email updated " + updated);
+   }
+````
+
+update --id=c1 --email=nuevo@test.com
+
+* Cliente dinamico
+```java
+   @Inject
+   @GraphQLClient("customers")
+   DynamicGraphQLClient dynamicCustomerClient;
+
+         Document query = document(
+         operation(
+             field("getCustomer",
+                 List.of(arg("customerId", customerId)),
+                 field("id"),
+                 field("name"),
+                 field("email"),
+                 field("customerId"))
+             )
+         );
+         
+         try {
+             Response response = dynamicCustomerClient.executeSync(query);
+             System.out.println(response);
+             System.out.println(response.getObject(Customer.class, "getCustomer"));
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+```
+
+* Un nuevo error
+```properties
+quarkus.smallrye-graphql.default-error-message=Kineteco exception
+```
+```java
+@ErrorCode("customer-not-found")
+public class CustomerNotFoundException extends RuntimeException {
+}
+
+```
+* Modify
+```java
+  @Query("getCustomer")
+   @Description("Get a Customer")
+   public Customer getCustomer(@Name("customerId") String customerId) {
+      return Customer.findByCustomerId(customerId)
+            .orElseThrow(() -> new CustomerNotFoundException());
+   }
+```
+* Test
+```
+view --id=c42
+update --id=c42 --email=nuevo@test.com
+```
+
+* Parse error 
+```java
+ ErrorOr<Customer> customerDetail(String customerId);
+
+public void updateEmail(String id, String email) {
+      ErrorOr<Customer> customerErrorOr = customerClient.customerDetail(id);
+      if (customerErrorOr.hasErrors()) {
+          System.out.println(customerErrorOr.getErrors());
+          return;
+      }
+      Customer customer = customerErrorOr.get();
+      customer.email = email;
+      Customer updated = customerClient.updateEmail(customer);
+      System.out.println("Email updated " + updated);
+}
+```
+
+En este video hemos aprendido cómo la flexbilidad y la potencia del cliente de GraphQL de 
+Quarkus nos permite consumir APIs GraqphQL con Java de forma eficaz. 

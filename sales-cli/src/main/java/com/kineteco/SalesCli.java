@@ -1,23 +1,19 @@
 package com.kineteco;
 
-import io.quarkus.runtime.QuarkusApplication;
+import com.kineteco.commands.ModifyCustomerEmailCommand;
+import com.kineteco.commands.ViewCustomerCommand;
+import io.quarkus.picocli.runtime.annotations.TopCommand;
 import picocli.CommandLine;
 
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
-@CommandLine.Command(name = "kineteco", mixinStandardHelpOptions = true)
-public class SalesCli implements Runnable, QuarkusApplication {
-
-   @Inject
-   CommandLine.IFactory factory;
-
-   @Override
-   public int run(String... args) throws Exception {
-      return new CommandLine(this, factory).execute(args);
-   }
-
-   @Override
-   public void run() {
-
-   }
+@TopCommand
+@CommandLine.Command(name = "kineteco",
+      mixinStandardHelpOptions = true,
+      subcommands = {
+            ViewCustomerCommand.class,
+            ModifyCustomerEmailCommand.class
+      })
+@ApplicationScoped
+public class SalesCli{
 }

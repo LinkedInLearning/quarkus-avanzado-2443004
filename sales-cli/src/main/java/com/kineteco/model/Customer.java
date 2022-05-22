@@ -1,18 +1,14 @@
 package com.kineteco.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-
-import javax.persistence.Entity;
-
-@Entity
-public class Customer extends PanacheEntity {
+public class Customer {
+   public Long id;
    public String customerId;
    public String name;
    public String email;
 
    @Override
    public String toString() {
-      return "Customer{" + "customerId='" + customerId + '\'' + ", name='" + name + '\'' + ", email='" + email + '\''
-            + '}';
+      return "Customer{" + "id=" + id + ", customerId='" + customerId + '\'' + ", name='" + name + '\'' + ", email='"
+            + email + '\'' + '}';
    }
 }
