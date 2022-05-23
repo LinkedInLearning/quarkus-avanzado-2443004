@@ -1,5 +1,6 @@
 package com.kineteco.service;
 
+import com.kineteco.graphql.CustomerNotFoundException;
 import com.kineteco.rest.CustomerCommand;
 import com.kineteco.client.Product;
 import com.kineteco.model.Customer;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 public class SalesService {
 
    public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
-      Customer customer = Customer.findByCustomerId(command.getCustomerId());
+      Customer customer = Customer.findByCustomerId(command.getCustomerId())
+            .orElseThrow(() -> new CustomerNotFoundException());
       CustomerSale customerSale = new CustomerSale();
       customerSale.customer = customer;
       customerSale.productSale = new ArrayList<>();
