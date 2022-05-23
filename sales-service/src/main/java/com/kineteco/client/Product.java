@@ -1,5 +1,8 @@
 package com.kineteco.client;
 
+import org.infinispan.protostream.annotations.ProtoFactory;
+import org.infinispan.protostream.annotations.ProtoField;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -9,12 +12,39 @@ public class Product {
    private String productLine;
    private BigDecimal price;
 
+   public Product() {
+   }
+
+   @ProtoFactory
+   public Product(String sku, String name, String productLine, BigDecimal price) {
+      this.sku = sku;
+      this.name = name;
+      this.productLine = productLine;
+      this.price = price;
+   }
+
+   @ProtoField(1)
    public String getSku() {
       return sku;
    }
 
+   @ProtoField(2)
    public String getProductLine() {
       return productLine;
+   }
+
+   @ProtoField(3)
+   public BigDecimal getPrice() {
+      return price;
+   }
+
+   @ProtoField(4)
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    public void setSku(String sku) {
@@ -25,20 +55,8 @@ public class Product {
       this.productLine = productLine;
    }
 
-   public BigDecimal getPrice() {
-      return price;
-   }
-
    public void setPrice(BigDecimal price) {
       this.price = price;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
    }
 
    @Override
