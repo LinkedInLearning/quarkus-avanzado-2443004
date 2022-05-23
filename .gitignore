@@ -4,3 +4,4 @@ node_modules
 npm-debug.log
 /.idea/
 !/kineteco-projects.iml
+/target/

@@ -4,8 +4,6 @@ import com.kineteco.client.Product;
 import com.kineteco.client.ProductInventoryServiceClient;
 import io.quarkus.cache.Cache;
 import io.quarkus.cache.CacheInvalidate;
-import io.quarkus.cache.CacheInvalidateAll;
-import io.quarkus.cache.CacheName;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.cache.CaffeineCache;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -38,14 +36,5 @@ public class ProductInventoryService {
    @CacheResult(cacheName = "stock")
    public Integer getStockRefreshed(String sku) {
       return productInventoryServiceClient.getStock(sku);
-   }
-
-   @CacheName("products")
-   Cache cache;
-
-   public void displayCacheContent() {
-      cache.as(CaffeineCache.class)
-            .keySet()
-            .forEach(LOGGER::debug);
    }
 }
