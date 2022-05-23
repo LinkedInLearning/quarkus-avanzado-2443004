@@ -25,50 +25,13 @@ public class ProductInventoryServiceTest {
    @Inject
    ProductInventoryService service;
 
-   @InjectMock
-   @RestClient
-   ProductInventoryServiceClient productInventoryServiceClient;
-
-   @CacheName("products")
-   Cache products;
-
-   @AfterEach
-   public void logCacheContent() {
-      products.as(CaffeineCache.class)
-               .keySet()
-               .forEach(LOGGER::debug);
-   }
-
    @Test
    public void testProductInventory() {
-      Product product = new Product();
-      product.setSku("KE180");
 
-      when(productInventoryServiceClient.inventory("KE180"))
-            .thenReturn(product);
-
-      service.findProduct("KE180");
-      service.findProduct("KE180");
-      service.findProduct("KE180");
-
-      verify(productInventoryServiceClient,
-            times(1)).inventory("KE180");
    }
 
    @Test
    public void testStock() {
-      Product product = new Product();
-      product.setSku("KE180");
 
-      when(productInventoryServiceClient.getStock("KE180"))
-            .thenReturn(12);
-
-      service.getStock("KE180");
-      service.getStock("KE180");
-      service.getStockRefreshed("KE180");
-      service.getStock("KE180");
-
-      verify(productInventoryServiceClient,
-            times(2)).getStock("KE180");
    }
 }
