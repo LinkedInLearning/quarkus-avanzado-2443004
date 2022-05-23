@@ -4,6 +4,7 @@ import com.kineteco.client.Product;
 import com.kineteco.client.ProductInventoryServiceClient;
 import com.kineteco.fallbacks.SalesServiceFallbackHandler;
 import com.kineteco.model.CustomerSale;
+import com.kineteco.service.ProductInventoryService;
 import com.kineteco.service.SalesService;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -37,11 +38,10 @@ public class SalesResource {
     private static final Logger LOGGER = Logger.getLogger(SalesResource.class);
 
     @Inject
-    @RestClient
-    ProductInventoryServiceClient productInventoryServiceClient;
+    SalesService salesService;
 
     @Inject
-    SalesService salesService;
+    ProductInventoryService productInventoryService;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -67,7 +67,7 @@ public class SalesResource {
         if (units == null) {
             throw new BadRequestException("units query parameter is mandatory");
         }
-        return Response.ok(productInventoryServiceClient.getStock(sku) >= units).build();
+        return Response.ok(productInventoryService.getStock(sku) >= units).build();
     }
 
     @POST
@@ -84,8 +84,7 @@ public class SalesResource {
     @Bulkhead(value= 1)
     @Transactional
     public Response createDeluxeCommand(@Valid CustomerCommand command) {
-        Product product = productInventoryServiceClient.inventory(command.getSku());
-
+        Product product = productInventoryService.findProduct(command.getSku());
         if ("DELUXE".equals(product.getProductLine())) {
             CustomerSale customerSale = salesService.createCustomerSale(command, product);
             return Response.ok(customerSale).build();

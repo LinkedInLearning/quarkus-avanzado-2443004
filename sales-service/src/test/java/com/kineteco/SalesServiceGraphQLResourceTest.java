@@ -32,7 +32,7 @@ public class SalesServiceGraphQLResourceTest {
             .post("/graphql/")
             .then()
             .contentType(ContentType.JSON)
-            .body("data.allCustomerSales.size()", is(4))
+            .body("data.allCustomerSales.size()", is(6))
             .statusCode(200);
    }
 }
