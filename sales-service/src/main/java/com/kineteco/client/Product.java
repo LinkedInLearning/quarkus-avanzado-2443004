@@ -12,33 +12,18 @@ public class Product {
    private String productLine;
    private BigDecimal price;
 
-   public Product() {
-   }
-
-   @ProtoFactory
-   public Product(String sku, String name, String productLine, BigDecimal price) {
-      this.sku = sku;
-      this.name = name;
-      this.productLine = productLine;
-      this.price = price;
-   }
-
-   @ProtoField(1)
    public String getSku() {
       return sku;
    }
 
-   @ProtoField(2)
    public String getProductLine() {
       return productLine;
    }
 
-   @ProtoField(3)
    public BigDecimal getPrice() {
       return price;
    }
 
-   @ProtoField(4)
    public String getName() {
       return name;
    }
