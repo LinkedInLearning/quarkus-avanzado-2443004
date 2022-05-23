@@ -6,6 +6,7 @@ import io.quarkus.qute.TemplateInstance;
 import org.jboss.logging.Logger;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,7 +20,6 @@ public class CustomerResource {
 
     private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> customers() {
@@ -30,7 +30,8 @@ public class CustomerResource {
     @Path("/{customerId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Customer get(@PathParam("customerId") String customerId) {
-        return Customer.findByCustomerId(customerId);
+        return Customer.findByCustomerId(customerId)
+              .orElseThrow(() -> new NotFoundException());
     }
 
     @GET
