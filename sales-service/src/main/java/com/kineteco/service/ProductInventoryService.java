@@ -17,35 +17,27 @@ import java.time.Duration;
 
 @ApplicationScoped
 public class ProductInventoryService {
-
-   private static final Logger LOGGER = Logger.getLogger(ProductInventoryService.class);
+   public static final String PRODUCTS = "products";
+   public static final String STOCK = "stock";
 
    @Inject
    @RestClient
    ProductInventoryServiceClient productInventoryServiceClient;
 
-   @CacheResult(cacheName = "products")
+   @CacheResult(cacheName = PRODUCTS)
    public Product findProduct(String sku) {
       return productInventoryServiceClient.inventory(sku);
    }
 
-   @CacheResult(cacheName = "stock")
+   @CacheResult(cacheName = STOCK)
    public Integer getStock(String sku) {
       return productInventoryServiceClient.getStock(sku);
    }
 
-   @CacheInvalidate(cacheName = "stocks")
-   @CacheResult(cacheName = "stock")
+   @CacheInvalidate(cacheName = STOCK)
+   @CacheResult(cacheName = STOCK)
    public Integer getStockRefreshed(String sku) {
       return productInventoryServiceClient.getStock(sku);
    }
 
-   @CacheName("products")
-   Cache cache;
-
-   public void displayCacheContent() {
-      cache.as(CaffeineCache.class)
-            .keySet()
-            .forEach(LOGGER::debug);
-   }
 }
