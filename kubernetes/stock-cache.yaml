@@ -1,0 +1,16 @@
+apiVersion: infinispan.org/v2alpha1
+kind: Cache
+metadata:
+  name: stock
+spec:
+  clusterName: infinispan
+  name: stock
+  template: |
+    distributedCache: 
+      mode: "SYNC"
+      statistics: "true"
+      encoding: 
+        key: 
+          mediaType: "application/x-protostream"
+        value: 
+          mediaType: "application/x-protostream"

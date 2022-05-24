@@ -1,10 +1,13 @@
 package com.kineteco.rest;
 
 import com.kineteco.model.Customer;
+import io.quarkus.infinispan.client.Remote;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
+import org.infinispan.client.hotrod.RemoteCache;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -20,10 +23,21 @@ public class CustomerResource {
 
     private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
+    @Inject
+    @Remote("customers")
+    RemoteCache<Long, Customer> customers;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> customers() {
         return Customer.listAll();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/memory")
+    public Response customersFromMemory() {
+        return Response.ok(customers.entrySet()).build();
     }
 
     @GET

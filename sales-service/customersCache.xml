@@ -1,0 +1,16 @@
+<distributed-cache statistics="true">
+    <encoding media-type="application/x-protostream"/>
+    <persistence>
+        <table-jdbc-store dialect="POSTGRES"
+                          shared="false"
+                          read-only="true"
+                          table-name="customer">
+            <connection-pool connection-url="jdbc:postgresql://postgres-sales-service.default:5432/sales"
+                             username="kineteco"
+                             password="kineteco"
+                             driver="org.postgresql.Driver"/>
+            <schema message-name="Customer"
+                    package="db.kineteco"/>
+        </table-jdbc-store>
+    </persistence>
+</distributed-cache>

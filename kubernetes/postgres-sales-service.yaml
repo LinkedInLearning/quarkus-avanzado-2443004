@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-sales-service
+spec:
+  selector:
+    matchLabels:
+      app: postgres-sales-service
+  template:
+    metadata:
+      labels:
+        app: postgres-sales-service
+    spec:
+      containers:
+        - name: postgres-sales-service
+          image: postgres:12
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: sales
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: kineteco-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kineteco-credentials
+                  key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: postgres-sales-service
+  name: postgres-sales-service
+spec:
+  ports:
+    - name: http
+      port: 5432
+      protocol: TCP
+  selector:
+    app: postgres-sales-service
+  type: NodePort
