@@ -80,6 +80,7 @@ curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releas
 kubectl create -f https://operatorhub.io/install/infinispan.yaml
 kubectl get csv -n olm
 kubectl create secret generic --from-file=identities.yaml connect-secret
+kubectl apply -f infinispan.yaml   
 ```
 
 
