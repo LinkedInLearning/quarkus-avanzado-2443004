@@ -23,21 +23,10 @@ public class CustomerResource {
 
     private static final Logger LOGGER = Logger.getLogger(CustomerResource.class);
 
-    @Inject
-    @Remote("customers")
-    RemoteCache<Long, Customer> customers;
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Customer> customers() {
         return Customer.listAll();
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/memory")
-    public Response customersFromMemory() {
-        return Response.ok(customers.entrySet()).build();
     }
 
     @GET
