@@ -17,10 +17,16 @@ http localhost:8280/q/metrics
 
 * Como usamos la extension caché, vamos a configurar las métricas
 ```properties
+quarkus.smallrye-graphql.metrics.enabled=true
+
 quarkus.cache.caffeine."products".metrics-enabled=true
 quarkus.cache.caffeine."stock".metrics-enabled=true
 ```
-
+* Probamos grapqhQL con el DEV UI
+```shell
+http localhost:8280/q/metrics | grep graphql 
+```
+* 
 * Probamos en linea de commandos
 ```shell
 http post localhost:8280/sales customerId=c1 sku=KE180 units=12   
