@@ -15,6 +15,7 @@ import java.util.ArrayList;
 @ApplicationScoped
 public class SalesService {
 
+   @Timed(value = "create-customer-command")
    public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
       Customer customer = Customer.findByCustomerId(command.getCustomerId())
             .orElseThrow(() -> new CustomerNotFoundException());

@@ -43,6 +43,9 @@ public class SalesResource {
     @Inject
     ProductInventoryService productInventoryService;
 
+    @Inject
+    MetricsService metricsService;
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("health")
@@ -67,7 +70,7 @@ public class SalesResource {
         if (units == null) {
             throw new BadRequestException("units query parameter is mandatory");
         }
-
+        metricsService.countStocks(units);
 
         return Response.ok(productInventoryService.getStock(sku) >= units).build();
     }
