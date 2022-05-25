@@ -1,18 +1,18 @@
 package com.kineteco.rest;
 
 import com.kineteco.client.Product;
-import com.kineteco.client.ProductInventoryServiceClient;
 import com.kineteco.fallbacks.SalesServiceFallbackHandler;
 import com.kineteco.model.CustomerSale;
+import com.kineteco.service.MetricsService;
 import com.kineteco.service.ProductInventoryService;
 import com.kineteco.service.SalesService;
+import io.micrometer.core.annotation.Timed;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 
@@ -43,6 +43,9 @@ public class SalesResource {
     @Inject
     ProductInventoryService productInventoryService;
 
+    @Inject
+    MetricsService metricsService;
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("health")
@@ -67,6 +70,9 @@ public class SalesResource {
         if (units == null) {
             throw new BadRequestException("units query parameter is mandatory");
         }
+
+        metricsService.countStocks(units);
+
         return Response.ok(productInventoryService.getStock(sku) >= units).build();
     }
 

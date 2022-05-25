@@ -2,8 +2,8 @@ package com.kineteco.service;
 
 import com.kineteco.client.Product;
 import com.kineteco.client.ProductInventoryServiceClient;
-import io.quarkus.infinispan.client.CacheInvalidate;
-import io.quarkus.infinispan.client.CacheResult;
+import io.quarkus.cache.CacheInvalidate;
+import io.quarkus.cache.CacheResult;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
@@ -12,8 +12,6 @@ import javax.inject.Inject;
 
 @ApplicationScoped
 public class ProductInventoryService {
-
-   private static final Logger LOGGER = Logger.getLogger(ProductInventoryService.class);
 
    @Inject
    @RestClient

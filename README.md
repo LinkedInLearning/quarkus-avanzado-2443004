@@ -1,90 +1,106 @@
 # Mejora el rendimiento de tu base de datos existente con Quarkus e Infinispan
 
-* Instalamos el operador de infinispan
+* Dependencias en SalesService y ProductInventory
 
-https://operatorhub.io/operator/infinispan
-
-* Creamos un infinispan
-```shell
-kubectl create secret generic --from-file=identities.yaml connect-secret
-kubectl apply -f infinispan.yaml 
+```xml
+<dependency>
+  <groupId>io.quarkus</groupId>
+  <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+</dependency>
 ```
 
-* Vamos a la consola web
 
-* Configuramos dos caches
+* Vemos el endpoint 
 ```shell
-kubectl apply -f stock.yaml 
-kubectl apply -f products-cache.yaml 
+http localhost:8280/q/metrics   
 ```
 
-* Sales Service conectamos Infinispan
+* Como usamos la extension caché, vamos a configurar las métricas
 ```properties
-%prod.quarkus.infinispan-client.server-list=infinispan-external:11222
-%prod.quarkus.infinispan-client.auth-username=admin
-%prod.quarkus.infinispan-client.auth-password=secret
-#%prod.quarkus.infinispan-client.auth-username=${infinispan-username}
-#%prod.quarkus.infinispan-client.auth-password=${infinispan-password}
+quarkus.cache.caffeine."products".metrics-enabled=true
+quarkus.cache.caffeine."stock".metrics-enabled=true
+```
+
+* Probamos en linea de commandos
+```shell
+http post localhost:8280/sales customerId=c1 sku=KE180 units=12   
+http post localhost:8280/sales customerId=c1 sku=KE325X units=12
+http post localhost:8280/sales customerId=c1 sku=KE325X units=12
+http  localhost:8280'/sales/KE180/availability?units=12'
+
+http localhost:8280/q/metrics | grep products 
+http localhost:8280/q/metrics | grep stock 
+```
+
+* Vamos a añadir un counter en Sales Service
+
+```java
+@ApplicationScoped
+public class MetricsService {
+
+   @Inject
+   MeterRegistry registry;
+
+   public void countStocks(int stock) {
+      if (stock == 1 ) {
+         registry
+               .counter("kineteco.stock.number", "type", "one")
+               .increment();
+      }
+
+      if (stock > 100 ) {
+         registry
+               .counter("kineteco.stock.number", "type", "greater100")
+               .increment();
+      }
+   }
+}
+```
+
+* Modificamos Sales Service REST
+```java
+ @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/{sku}/availability")
+    @Timeout(value = 100)
+    @Retry(retryOn = TimeoutException.class, delay = 100, jitter = 25)
+    @Fallback(value = SalesServiceFallbackHandler.class)
+    public Response available(@PathParam("sku") String sku, @QueryParam("units") Integer units) {
+        LOGGER.debugf("available %s %d", sku, units);
+        if (units == null) {
+            throw new BadRequestException("units query parameter is mandatory");
+        }
+
+        metricsService.countStocks(units);
+
+        return Response.ok(productInventoryService.getStock(sku) >= units).build();
+    }
 ```
 
 * Probamos
 ```shell
-export SALES_SERVICE=$(minikube service --url sales-service)  
-http $SALES_SERVICE'/sales/KE180/availability?units=12' 
-http post $SALES_SERVICE/sales customerId=c1 sku=KE180 units=12
-http post $SALES_SERVICE/sales customerId=c1 sku=KE325X units=12
+http  localhost:8280'/sales/KE180/availability?units=1
+http  localhost:8280'/sales/KE180/availability?units=1
+http  localhost:8280'/sales/KE180/availability?units=200
+http  localhost:8280'/sales/KE180/availability?units=1
+http  localhost:8280'/sales/KE180/availability?units=40
+http  localhost:8280'/sales/KE180/availability?units=4
+
+http localhost:8280/q/metrics | grep kineteco.stock.number  
 ```
 
-* Vamos a crear una cache table store
+* Usar anotaciones
+
+```java
+@ApplicationScoped
+public class SalesService {
+
+   @Timed(value = "create-customer-command")
+```
 
 ```shell
-http $SALES_SERVICE/customers
- 
-kubectl apply -f customers-cache.yaml 
+http post localhost:8280/sales customerId=c1 sku=KE325X units=12
+http post localhost:8280/sales customerId=c1 sku=KE325X units=12
+http post localhost:8280/sales customerId=c1 sku=KE325X units=12
+http post localhost:8280/sales customerId=c7 sku=KE325X units=12
 ```
-
-* Vamos a crear un nuevo tipo y endpoint
-```java
-@AutoProtoSchemaBuilder(includeClasses= { Customer.class },
-      schemaPackageName = "db.kineteco")
-public interface DBSchema extends GeneratedSchema {
-}
-
-@RegisterForReflection
-@Entity
-public class Customer extends PanacheEntity {
-   @ProtoField(1)
-   public String name;
-   @ProtoField(2)
-   public String customerId;
-   @ProtoField(3)
-   public String email;
-
-   public Customer() {
-   }
-
-   @ProtoFactory
-   public Customer(String customerId, String name, String email) {
-      this.customerId = customerId;
-      this.name = name;
-      this.email = email;
-   }
-
-   public static Optional<Customer> findByCustomerId(String customerId) {
-      return find("customerId", customerId).firstResultOptional();
-   }
-}
-
-Customer Resource
-   @Inject
-   @Remote("customers")
-   RemoteCache<Long, Customer> customers;
-
-   @GET
-   @Produces(MediaType.APPLICATION_JSON)
-   @Path("/memory")
-   public Response customersFromMemory() {
-      return Response.ok(customers.entrySet()).build();
-   }
-```
-* Creamos una DB

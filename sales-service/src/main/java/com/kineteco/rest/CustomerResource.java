@@ -1,20 +1,16 @@
 package com.kineteco.rest;
 
 import com.kineteco.model.Customer;
-import io.quarkus.infinispan.client.Remote;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
-import org.infinispan.client.hotrod.RemoteCache;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 

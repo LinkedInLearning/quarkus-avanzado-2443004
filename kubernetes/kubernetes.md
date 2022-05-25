@@ -39,7 +39,7 @@ kubectl delete --all services --namespace=kafka
 
 ## Creacion contenedores
 
-* Crear secretros y configmap
+* Crear secretos y configmap
 
 ```shell
 kubectl create configmap kineteco
@@ -94,4 +94,13 @@ cd sales-service
 
 cd order-service
 ./mvnw clean package -Dquarkus.kubernetes.deploy=true -DskipTests=true
+```
+* Prometheus and Graphana setup
+```shell
+kubectl create -f kubernetes/metrics/manifests-prometheus-grafana/setup
+kubectl create -f kubernetes/metrics/manifests-prometheus-grafana 
+kubectl apply -f kubernetes/metrics/servicemonitor.yml 
+kubectl port-forward -n monitoring service/grafana 3000:3000
+http://localhost:3000/login
+admin/admin
 ```

@@ -2,8 +2,6 @@ package com.kineteco.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import org.infinispan.protostream.annotations.ProtoFactory;
-import org.infinispan.protostream.annotations.ProtoField;
 
 import javax.persistence.Entity;
 import java.util.Optional;
