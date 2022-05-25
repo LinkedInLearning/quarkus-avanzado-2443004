@@ -6,6 +6,11 @@
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-opentelemetry-exporter-otlp</artifactId>
 </dependency>
+
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-extension-trace-propagators</artifactId>
+</dependency>
 ```
 
 * Configuracion
@@ -24,3 +29,8 @@ quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://localhost:4317
    @WithSpan
    public CustomerSale createCustomerSale(@SpanAttribute(value = "customerCommand") CustomerCommand command, Product product) {
 ```
+
+Te recuerdo que Opentracing está ahora obsoleto y que debemos de migrar
+a OpenTelemetry. 
+Te invito a estar al tanto de las últimas novedades de la extension Opentelemetry
+de Quarkus en los foros y la web de Quarkus.
