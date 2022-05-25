@@ -7,6 +7,8 @@ import com.kineteco.model.Customer;
 import com.kineteco.model.CustomerSale;
 import com.kineteco.model.ProductSale;
 import io.micrometer.core.annotation.Timed;
+import io.opentelemetry.extension.annotations.SpanAttribute;
+import io.opentelemetry.extension.annotations.WithSpan;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
@@ -16,7 +18,8 @@ import java.util.ArrayList;
 public class SalesService {
 
    @Timed(value = "create-customer-command")
-   public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
+   @WithSpan
+   public CustomerSale createCustomerSale(@SpanAttribute(value = "customerCommand") CustomerCommand command, Product product) {
       Customer customer = Customer.findByCustomerId(command.getCustomerId())
             .orElseThrow(() -> new CustomerNotFoundException());
       CustomerSale customerSale = new CustomerSale();
