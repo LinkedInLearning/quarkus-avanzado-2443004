@@ -18,8 +18,7 @@ import java.util.ArrayList;
 public class SalesService {
 
    @Timed(value = "create-customer-command")
-   @WithSpan
-   public CustomerSale createCustomerSale(@SpanAttribute(value = "customerCommand") CustomerCommand command, Product product) {
+   public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
       Customer customer = Customer.findByCustomerId(command.getCustomerId())
             .orElseThrow(() -> new CustomerNotFoundException());
       CustomerSale customerSale = new CustomerSale();
