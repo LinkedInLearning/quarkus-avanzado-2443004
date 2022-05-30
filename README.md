@@ -173,8 +173,6 @@ import java.util.stream.Collectors;
       }
 
       private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
-         System.out.println(stat);
-         System.out.println(manufactureOrder);
          stat.sku = manufactureOrder.sku;
          stat.count = stat.count + 1;
          return stat;
