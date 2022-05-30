@@ -26,4 +26,17 @@ import java.util.stream.Collectors;
 public class StatsService {
    private static final Logger LOGGER = Logger.getLogger(StatsService.class);
 
+   @Incoming("orders")
+   @Outgoing("orders-stats")
+   public Multi<OrderStat> computeTopProducts(Multi<ManufactureOrder> orders) {
+      return orders.onItem()
+            .transform(order -> {
+               OrderStat stat = new OrderStat();
+               stat.sku = order.sku;
+               stat.count = 1;
+               return stat;
+
+   })
+            .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
+   }
 }

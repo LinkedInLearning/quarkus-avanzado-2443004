@@ -13,8 +13,12 @@ import java.util.Collection;
 @Path("/order-stats")
 public class OrderStatsServerSentEvents {
 
+   @Channel("orders-stats")
+   Multi<OrderStat> ordersStats;
+
    @GET
-   public Multi<Collection<String>> stream() {
-      return null;
+   @Produces(MediaType.SERVER_SENT_EVENTS)
+   public Multi<OrderStat> stream() {
+      return ordersStats;
    }
 }
