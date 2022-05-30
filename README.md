@@ -2,9 +2,10 @@
 * error
 ```java
  manufactureOrder.id = sku;
-//      if (sku.equals("KE180")){
-//         manufactureOrder.sku = null;
-//      }
+
+//      if(sku.equals("KI9K")) {
+      manufactureOrder.sku = null;
+      }
       manufactureOrder.count = quantity;
 ```
 * Transforming exception

@@ -18,6 +18,9 @@ public class ManufactureOrderEmitter {
       LOGGER.debugf("Emit manufacturing message for sku %s with %d quantity", sku, quantity);
       ManufactureOrder manufactureOrder = new ManufactureOrder();
       manufactureOrder.sku = sku;
+      if(sku.equals("KI9K")) {
+         manufactureOrder.sku = null;
+      }
       manufactureOrder.quantity = quantity;
       emitter.send(manufactureOrder);
    }
