@@ -3,7 +3,7 @@
 ```java
  manufactureOrder.id = sku;
 
-//      if(sku.equals("KI9K")) {
+    if(sku.equals("KI9K")) {
       manufactureOrder.sku = null;
       }
       manufactureOrder.count = quantity;
