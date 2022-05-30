@@ -1,26 +1,15 @@
-# Gestión de errores reactivos con Mutiny y Quarkus
-* error
-```java
- manufactureOrder.id = sku;
-//      if (sku.equals("KE180")){
-//         manufactureOrder.sku = null;
-//      }
-      manufactureOrder.count = quantity;
-```
-* Transforming exception
-```java
- .onFailure().transform(OrderStatsException::new)
-```
+# Backpressure con Mutiny y Quarkus
 
-* Recover With
 ```java
-.onFailure().recoverWithCompletion()
-
-.onFailure().recoverWithItem(() -> onNewStat(null))
-
+ for (int i = 0; i < 200; i++){
+         emitter.send(manufactureOrder);
+      }
 ```
-* Retry
+* Drop 
 ```java
-.onFailure().retry().indefinitely()
-.onFailure().retry().atMost(3)
+.onOverflow().invoke(() -> LOGGER.error("No me da la vida")).drop();
+```
+* Buffer
+```java
+.onOverflow().invoke(() -> LOGGER.error("No me da la vida")).buffer(10)
 ```
