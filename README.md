@@ -91,3 +91,66 @@ public class OrderStatsServerSentEvents {
 ```json
 .select().where(order -> order.sku != null && order.sku.startsWith("KE1"))
 ```
+
+* Final
+```java
+package com.kineteco.service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kineteco.model.OrderStat;
+import io.vertx.core.impl.ConcurrentHashSet;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.util.Collection;
+
+
+@ApplicationScoped
+public class StatsService {
+   private static final Logger LOGGER = Logger.getLogger(StatsService.class);
+
+   @Inject
+   ObjectMapper mapper;
+
+   private final Collection<OrderStat> stats = new ConcurrentHashSet<>();
+
+   @Incoming("orders")
+   @Outgoing("orders-stats")
+   public Multi<Collection<String>> computeTopProducts(Multi<ManufactureOrder> orders) {
+      return orders
+            .group().by(order -> order.sku)
+            .onItem().transformToMultiAndMerge(group ->
+                  group
+                        .onItem().scan(OrderStat::new, this::incrementOrderCount))
+            .select().where(order -> order.sku != null && order.sku.startsWith("KE1"))
+            .onItem().transform(this::onNewStat)
+            .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
+   }
+
+   private Collection<String> onNewStat(OrderStat score) {
+      stats.add(score);
+      List<String> statsResult =
+            stats.stream()
+                  .sorted(Comparator.comparingInt(s -> -1 * s.count))
+                  .map(this::transformJson)
+                  .collect(Collectors.toList());
+      return statsResult;
+   }
+
+   private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
+      stat.sku = manufactureOrder.sku;
+      stat.count = stat.count + 1;
+      return stat;
+   }
+
+   public String transformJson(OrderStat score) {
+      try {
+         return mapper.writeValueAsString(score);
+      } catch (JsonProcessingException e) {
+         throw new RuntimeException(e);
+      }
+   }
+}
+
+```
