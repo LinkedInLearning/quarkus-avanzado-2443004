@@ -5,20 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kineteco.model.ManufactureOrder;
 import com.kineteco.model.OrderStat;
 import io.smallrye.mutiny.Multi;
-import io.vertx.core.impl.ConcurrentHashSet;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,7 +25,7 @@ public class StatsService {
    @Outgoing("orders-stats")
    public Multi<Collection<String>> computeTopProducts(Multi<ManufactureOrder> orders) {
       return orders
-            .select().where(order -> order.sku != null && order.sku.startsWith("KE1"))
+            .select().where(order -> order.sku != null && order.sku.startsWith("KE"))
             .group().by(order -> order.sku)
             .onItem().transformToMultiAndMerge(g ->
                   g.onItem().scan(OrderStat::new, this::incrementOrderCount))
@@ -41,7 +36,7 @@ public class StatsService {
    private final Map<String, OrderStat> stats = new HashMap<>();
 
    private Collection<String> onNewStat(OrderStat stat) {
-      if (stat.sku != null) {
+      if (stat != null && stat.sku != null) {
          stats.put(stat.sku, stat);
       }
 

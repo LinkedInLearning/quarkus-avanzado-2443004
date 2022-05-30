@@ -16,8 +16,6 @@ import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
