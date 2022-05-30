@@ -30,7 +30,6 @@ public class StatsService {
             .onItem().transformToMultiAndMerge(g ->
                   g.onItem().scan(OrderStat::new, this::incrementOrderCount))
             .onItem().transform(this::onNewStat)
-            .onFailure().retry().indefinitely()
             .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
    }
 
