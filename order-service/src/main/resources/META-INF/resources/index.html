@@ -30,13 +30,25 @@
 </div>
 <div class="container container-cards-pf">
     <div class="row row-cards-pf">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
             <div class="card-pf card-pf-view card-pf-view-select">
                 <h2 class="card-pf-title">
                     <i class="fa fa-list"></i> Manufacture Orders
                 </h2>
                 <div class="card-pf-body">
                     <div id="orders">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+            <div class="card-pf card-pf-view card-pf-view-select">
+                <h2 class="card-pf-title">
+                    <i class="fa fa-list"></i> Top Product Stats
+                </h2>
+                <div class="card-pf-body">
+                    <div id="orders-stats">
 
                     </div>
                 </div>
@@ -58,12 +70,28 @@
         top.onmessage = function (event) {
             updateManufactureOrderList(event.data);
         };
+
+        var source = new EventSource("/order-stats");
+        source.onmessage = (event) => {
+            updateManufactureOrderStats(event.data);
+        };
     });
 
 
     function updateManufactureOrderList(order) {
         var jsonOrder = JSON.parse(order);
         $("#orders").append($("<p>" + jsonOrder.sku + " [" + jsonOrder.quantity + "]</p>"))
+    }
+
+    function updateManufactureOrderStats(orderStats) {
+        $("#orders-stats").children("p").remove();
+        JSON.parse(orderStats).forEach(function(stat) {
+            var jsonStat = JSON.parse(stat);
+            if (jsonStat.sku == 'null') {
+                return;
+            }
+            $("#orders-stats").append($("<p>" + jsonStat.sku + " [" + jsonStat.count + "]</p>"))
+        });
     }
 
 </script>

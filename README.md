@@ -1,29 +1,93 @@
-# Medir la cobertura de tests en Quarkus
+# Composición y transformación de Streams con Mutiny y Quarkus
 
-* Añadimos dependencia `quarkus-jococo` en pom.xml 
-```xml
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-jacoco</artifactId>
-    <scope>test</scope>
-</dependency>
+Te invito a que repases el vídeo de Quarkus Esencial sobre la programación reactiva.
+
+* Creamos un Server Sent Event Endpoint
+```java
+@Path("/order-stats")
+public class OrderStatsServerSentEvents {
+   @Channel("orders-stats")
+   Multi<OrderStat> ordersStats;
+
+   @GET
+   @Produces(MediaType.SERVER_SENT_EVENTS)
+   public Multi<OrderStat> stream() {
+      return ordersStats;
+   }
+}
 ```
 
-* mvn clean verify y mirar en target
+* Stats Service
+```java
+public class StatsService {
+   private static final Logger LOGGER = Logger.getLogger(OrderServiceWebsocket.class);
 
-* Configuramos 
+   @Incoming("orders")
+   @Outgoing("orders-stats")
+   public Multi<OrderStat> computeTopProducts(Multi<ManufactureOrder> orders) {
+      return orders
+            .onItem().transform(order -> {
+               OrderStat stat = new OrderStat();
+               stat.sku = order.sku;
+               stat.count = 1;
+               return stat;
+            })
+            .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
+   }
+}
+```
+
+* Arrancamos vemos un error. Tenemos que configurar broadcast
 ```properties
-quarkus.jacoco.title=Sales Service
-quarkus.jacoco.footer=Kineteco
+mp.messaging.incoming.orders.broadcast=true
 ```
 
-No hemos tenido que añadir nada especial en el pom.xml
+* Si vamos a la pantalla y lanzamos unos mensajes vemos. Queremos agrupar los count.
 
-Para terminar te diré que para cambiar los parametros por defecto de los ratios,
-incluir coverage de los test de integracion nativos o incluir tests que no
-lleven las anotaciones de test de Quarkus, tendràs que añadir configuracion adicional
-en el pom.xml y encontrarás toda la documentacion en la documentación de Quarkus.
-Recuerda que una buena covertura de test no significa que la aplicación esté bien
-testeada, sin embargo es una buena métrica a tener en cuenta desde el inicio.
+```java
+ public Multi<OrderStat> computeTopProducts(Multi<ManufactureOrder> orders) {
+      return orders
+      .group().by(order -> order.sku)
+      .onItem().transformToMultiAndMerge(group ->
+      group
+      .onItem().scan(OrderStat::new, this::incrementOrderCount))
+      .onItem().transform(topProducts::onNewStat)
+      .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
+      }
 
- 
+private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
+      stat.sku = manufactureOrder.sku;
+      stat.count = stat.count + 1;
+      return stat;
+      }
+
+@Path("/order-stats")
+public class OrderStatsServerSentEvents {
+   @Channel("orders-stats")
+   Multi<Collection<String>> ordersStats;
+
+   @GET
+   @Produces(MediaType.SERVER_SENT_EVENTS)
+   public Multi<Collection<String>> stream() {
+      return ordersStats;
+   }
+}
+```
+
+* HTML change
+```json
+ function updateManufactureOrderStats(orderStats) {
+      $("#orders-stats").children("p").remove();
+      JSON.parse(orderStats).forEach(function(stat) {
+      var jsonStat = JSON.parse(stat);
+      if (jsonStat.sku == 'null') {
+      return;
+    }
+      $("#orders-stats").append($("<p>" + jsonStat.sku + " [" + jsonStat.count + "]</p>"))
+    });
+}
+```
+* Añadir select
+```json
+.select().where(order -> order.sku != null && order.sku.startsWith("KE1"))
+```
