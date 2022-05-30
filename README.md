@@ -1,4 +1,4 @@
-# Composición y transformación de Streams con Mutiny y Quarkus
+# Transformación de streams simple y visualización con Server Sent Events y Quarkus
 
 Te invito a que repases el vídeo de Quarkus Esencial sobre la programación reactiva.
 
@@ -173,8 +173,6 @@ import java.util.stream.Collectors;
       }
 
       private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
-         System.out.println(stat);
-         System.out.println(manufactureOrder);
          stat.sku = manufactureOrder.sku;
          stat.count = stat.count + 1;
          return stat;

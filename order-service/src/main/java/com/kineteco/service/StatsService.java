@@ -26,48 +26,4 @@ import java.util.stream.Collectors;
 public class StatsService {
    private static final Logger LOGGER = Logger.getLogger(StatsService.class);
 
-   @Inject
-   ObjectMapper mapper;
-
-   private final Map<String, OrderStat> stats = new HashMap<>();
-
-   @Incoming("orders")
-   @Outgoing("orders-stats")
-   public Multi<Collection<String>> computeTopProducts(Multi<ManufactureOrder> orders) {
-
-      return orders
-            .group().by(order -> order.sku)
-            .onItem().transformToMultiAndMerge(g -> g.onItem()
-                  .scan(OrderStat::new, this::incrementOrderCount))
-            .onItem().transform(this::onNewStat)
-            .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
-   }
-
-   private Collection<String> onNewStat(OrderStat stat) {
-      if (stat.sku != null) {
-         stats.put(stat.sku, stat);
-      }
-      return stats.values()
-                  .stream()
-                  .sorted(Comparator.comparingInt(s -> -1 * s.count))
-                  .map(this::transformJson)
-                  .collect(Collectors.toUnmodifiableList());
-   }
-
-   public String transformJson(OrderStat score) {
-      try {
-         return mapper.writeValueAsString(score);
-      } catch (JsonProcessingException e) {
-         throw new RuntimeException(e);
-      }
-   }
-
-   private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
-      System.out.println(stat);
-      System.out.println(manufactureOrder);
-      stat.sku = manufactureOrder.sku;
-      stat.count = stat.count + 1;
-      return stat;
-   }
-
 }
