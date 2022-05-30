@@ -14,11 +14,11 @@ import java.util.Collection;
 public class OrderStatsServerSentEvents {
 
    @Channel("orders-stats")
-   Multi<OrderStat> ordersStats;
+   Multi<Collection<String>> ordersStats;
 
    @GET
    @Produces(MediaType.SERVER_SENT_EVENTS)
-   public Multi<OrderStat> stream() {
+   public Multi<Collection<String>> stream() {
       return ordersStats;
    }
 }

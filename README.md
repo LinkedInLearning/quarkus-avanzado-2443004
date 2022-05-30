@@ -1,4 +1,4 @@
-# Composición y transformación de Streams con Mutiny y Quarkus
+# Transformación, filrado y agrupación de streams de datos en Quarkus
 
 Te invito a que repases el vídeo de Quarkus Esencial sobre la programación reactiva.
 

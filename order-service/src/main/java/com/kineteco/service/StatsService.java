@@ -28,15 +28,44 @@ public class StatsService {
 
    @Incoming("orders")
    @Outgoing("orders-stats")
-   public Multi<OrderStat> computeTopProducts(Multi<ManufactureOrder> orders) {
-      return orders.onItem()
-            .transform(order -> {
-               OrderStat stat = new OrderStat();
-               stat.sku = order.sku;
-               stat.count = 1;
-               return stat;
-
-   })
+   public Multi<Collection<String>> computeTopProducts(Multi<ManufactureOrder> orders) {
+      return orders
+            .select().where(order -> order.sku != null && order.sku.startsWith("KE1"))
+            .group().by(order -> order.sku)
+            .onItem().transformToMultiAndMerge(g ->
+                  g.onItem().scan(OrderStat::new, this::incrementOrderCount))
+            .onItem().transform(this::onNewStat)
             .invoke(() -> LOGGER.info("Order received. Computed the top product stats"));
+   }
+
+   private final Map<String, OrderStat> stats = new HashMap<>();
+
+   private Collection<String> onNewStat(OrderStat stat) {
+      if (stat.sku != null) {
+         stats.put(stat.sku, stat);
+      }
+
+      return stats.values()
+            .stream()
+            .sorted(Comparator.comparingInt(s -> -1 * s.count))
+            .map(this::transformJson)
+            .collect(Collectors.toUnmodifiableList());
+   }
+
+   @Inject
+   ObjectMapper mapper;
+
+   public String transformJson(OrderStat score) {
+      try {
+         return mapper.writeValueAsString(score);
+      } catch (JsonProcessingException e) {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private OrderStat incrementOrderCount(OrderStat stat, ManufactureOrder manufactureOrder) {
+      stat.sku = manufactureOrder.sku;
+      stat.count = stat.count + 1;
+      return stat;
    }
 }

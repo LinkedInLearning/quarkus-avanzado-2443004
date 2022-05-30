@@ -73,7 +73,7 @@
 
         var source = new EventSource("/order-stats");
         source.onmessage = (event) => {
-            updateManufactureStatEach(event.data);
+            updateManufactureStatList(event.data);
         };
     });
 
