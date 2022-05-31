@@ -17,8 +17,8 @@ public class ManufactureOrderEmitter {
       ManufactureOrder manufactureOrder = new ManufactureOrder();
       manufactureOrder.sku = sku;
       manufactureOrder.quantity = quantity;
-      for (int i = 0; i < 200; i++){
+//      for (int i = 0; i < 200; i++){
          emitter.send(manufactureOrder);
-      }
+//      }
    }
 }
