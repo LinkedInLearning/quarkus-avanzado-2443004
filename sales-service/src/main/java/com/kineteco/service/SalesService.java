@@ -7,7 +7,6 @@ import com.kineteco.model.CustomerSale;
 import com.kineteco.model.ProductSale;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 

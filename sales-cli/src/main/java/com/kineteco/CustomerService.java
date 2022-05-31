@@ -2,7 +2,6 @@ package com.kineteco;
 
 import com.kineteco.model.Customer;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.transaction.Transactional;
 import java.util.Optional;

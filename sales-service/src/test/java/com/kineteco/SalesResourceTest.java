@@ -7,7 +7,6 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
-
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;

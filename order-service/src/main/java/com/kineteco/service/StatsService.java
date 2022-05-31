@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kineteco.model.ManufactureOrder;
 import com.kineteco.model.OrderStat;
+import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Multi;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class StatsService {
-   private static final Logger LOGGER = Logger.getLogger(StatsService.class);
 
    @Incoming("orders")
    @Outgoing("orders-stats")
@@ -30,6 +29,7 @@ public class StatsService {
             .onItem().transformToMultiAndMerge(g ->
                   g.onItem().scan(OrderStat::new, this::incrementOrderCount))
             .onItem().transform(this::onNewStat)
+            .onOverflow().invoke(() -> Log.info("No me da la vida")).drop()
             .onFailure().retry().atMost(10);
    }
 

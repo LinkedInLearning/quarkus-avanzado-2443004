@@ -1,6 +1,5 @@
 package com.kineteco;
 
-import com.kineteco.model.OrderStat;
 import io.smallrye.mutiny.Multi;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 

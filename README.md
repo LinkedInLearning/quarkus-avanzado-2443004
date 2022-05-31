@@ -7,9 +7,9 @@
 ```
 * Drop 
 ```java
-.onOverflow().invoke(() -> LOGGER.error("No me da la vida")).drop();
+.onOverflow().invoke(() -> Log.error("No me da la vida")).drop();
 ```
 * Buffer
 ```java
-.onOverflow().invoke(() -> LOGGER.error("No me da la vida")).buffer(10)
+.onOverflow().invoke(() -> Log.error("No me da la vida")).buffer(10)
 ```

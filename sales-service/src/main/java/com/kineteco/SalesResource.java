@@ -4,8 +4,8 @@ import com.kineteco.client.Product;
 import com.kineteco.client.ProductInventoryServiceClient;
 import com.kineteco.fallbacks.SalesServiceFallbackHandler;
 import com.kineteco.model.CustomerSale;
-import com.kineteco.model.ProductSale;
 import com.kineteco.service.SalesService;
+import io.quarkus.logging.Log;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
@@ -13,7 +13,6 @@ import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.logging.Logger;
 import org.jboss.resteasy.api.validation.ResteasyViolationException;
 
 import javax.inject.Inject;
@@ -29,14 +28,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Path("/sales")
 public class SalesResource {
-
-    private static final Logger LOGGER = Logger.getLogger(SalesResource.class);
 
     @Inject
     @RestClient
@@ -65,7 +61,7 @@ public class SalesResource {
     @Retry(retryOn = TimeoutException.class, delay = 100, jitter = 25)
     @Fallback(value = SalesServiceFallbackHandler.class)
     public Response available(@PathParam("sku") String sku, @QueryParam("units") Integer units) {
-        LOGGER.debugf("available %s %d", sku, units);
+        Log.debugf("available %s %d", sku, units);
         if (units == null) {
             throw new BadRequestException("units query parameter is mandatory");
         }

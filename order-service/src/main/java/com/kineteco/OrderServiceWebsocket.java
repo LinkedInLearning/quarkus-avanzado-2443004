@@ -2,11 +2,11 @@ package com.kineteco;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kineteco.model.ManufactureOrder;
+import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.subscription.Cancellable;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.jboss.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,8 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @ApplicationScoped
 @ServerEndpoint("/orders")
 public class OrderServiceWebsocket {
-   private static final Logger LOGGER = Logger.getLogger(OrderServiceWebsocket.class);
-
    @Inject
    ObjectMapper mapper;
 
@@ -35,13 +33,13 @@ public class OrderServiceWebsocket {
 
    @OnOpen
    public void onOpen(Session session) {
-      LOGGER.info("Session opened");
+      Log.info("Session opened");
       sessions.add(session);
    }
 
    @OnClose
    public void onClose(Session session) {
-      LOGGER.info("Session closed");
+      Log.info("Session closed");
       sessions.remove(session);
    }
 
@@ -54,7 +52,7 @@ public class OrderServiceWebsocket {
    private void writeData(Session session, String serialized) {
       session.getAsyncRemote().sendText(serialized, result -> {
          if (result.getException() != null) {
-            LOGGER.error("Unable to write message to web socket", result.getException());
+            Log.error("Unable to write message to web socket", result.getException());
          }
       });
    }

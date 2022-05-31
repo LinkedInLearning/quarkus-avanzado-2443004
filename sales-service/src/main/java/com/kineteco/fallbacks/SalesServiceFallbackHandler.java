@@ -1,19 +1,17 @@
 package com.kineteco.fallbacks;
 
+import io.quarkus.logging.Log;
 import org.eclipse.microprofile.faulttolerance.ExecutionContext;
 import org.eclipse.microprofile.faulttolerance.FallbackHandler;
-import org.jboss.logging.Logger;
 
 import javax.ws.rs.core.Response;
 
 public class SalesServiceFallbackHandler implements FallbackHandler<Response> {
 
-   private static final Logger LOGGER = Logger.getLogger(SalesServiceFallbackHandler.class);
-
    @Override
    public Response handle(ExecutionContext context) {
       String exceptionName = getExceptionName(context);
-      LOGGER.debugf("Handle exception %s", exceptionName);
+      Log.debugf("Handle exception %s", exceptionName);
       Response response;
 
       switch (exceptionName) {

@@ -6,6 +6,7 @@ import com.kineteco.model.ProductLine;
 import com.kineteco.model.ValidationGroups;
 import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
+import io.quarkus.logging.Log;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.common.annotation.NonBlocking;
 import io.smallrye.mutiny.Uni;
@@ -14,7 +15,6 @@ import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestQuery;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -42,7 +42,6 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 @ApplicationScoped
 @Path("/products")
 public class ProductInventoryResource {
-    private static final Logger LOGGER = Logger.getLogger(ProductInventoryResource.class);
 
     @Inject
     ProductInventoryConfig productInventoryConfig;
@@ -54,7 +53,7 @@ public class ProductInventoryResource {
     @Path("/health")
     @NonBlocking
     public String health() {
-        LOGGER.debug("health called");
+        Log.debug("health called");
         return productInventoryConfig.greetingMessage();
     }
 
@@ -65,7 +64,7 @@ public class ProductInventoryResource {
     @APIResponse(responseCode = "204", description = "No products")
     public Uni<List<ProductInventory>> listInventory(@RestQuery("page") Integer page,
                                                      @RestQuery("size") Integer size) {
-        LOGGER.debug("Product inventory list");
+        Log.debug("Product inventory list");
         Uni<List<ProductInventory>> fullInventory;
         if (page == null && size == null) {
             fullInventory = ProductInventory.findAll(Sort.by("name")).list();
@@ -83,7 +82,7 @@ public class ProductInventoryResource {
     @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(implementation = ProductInventory.class, type = SchemaType.OBJECT)))
     @APIResponse(responseCode = "404", description = "No product")
     public Uni<ProductInventory> inventory(String sku) {
-        LOGGER.debugf("get by sku %s", sku);
+        Log.debugf("get by sku %s", sku);
         return ProductInventory.findBySku(sku);
     }
 
@@ -93,7 +92,7 @@ public class ProductInventoryResource {
     @Path("/{sku}/stock")
     @APIResponse(responseCode = "200", content = @Content(mediaType = APPLICATION_JSON, schema = @Schema(type = SchemaType.INTEGER)))
     public Uni<Integer> getStock(String sku) {
-        LOGGER.debugf("getStock by sku %s", sku);
+        Log.debugf("getStock by sku %s", sku);
         return ProductInventory.findCurrentStock(sku);
     }
 
@@ -104,11 +103,11 @@ public class ProductInventoryResource {
     @ReactiveTransactional
     public Uni<Response> createProduct(@Valid @ConvertGroup(to = ValidationGroups.Post.class) ProductInventory productInventory,
                                        @Context UriInfo uriInfo) {
-        LOGGER.debugf("create %s", productInventory);
+        Log.debugf("create %s", productInventory);
        return productInventory.<ProductInventory>persist()
               .map(p -> {
                   UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(p.sku);
-                  LOGGER.debugf("New product created with sku %s", p.sku);
+                  Log.debugf("New product created with sku %s", p.sku);
                   return Response.created(builder.build()).build();
               });
     }
@@ -127,7 +126,7 @@ public class ProductInventoryResource {
                   return retrieved;
               })
               .map(p -> {
-                  LOGGER.debugf("Product updated with new valued %s", p);
+                  Log.debugf("Product updated with new valued %s", p);
                   return Response.ok(p).build();
               });
     }
@@ -139,9 +138,9 @@ public class ProductInventoryResource {
     @APIResponse(responseCode = "404", description = "No product")
     @ReactiveTransactional
     public Uni<Response> delete(String sku) {
-        LOGGER.debugf("delete by sku %s", sku);
+        Log.debugf("delete by sku %s", sku);
         return ProductInventory.delete("sku", sku)
-              .invoke(() -> LOGGER.debugf("deleted with sku %s", sku))
+              .invoke(() -> Log.debugf("deleted with sku %s", sku))
               .onItem().transform(d -> d > 0 ?  Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build());
     }
 
@@ -154,7 +153,7 @@ public class ProductInventoryResource {
     public Uni<Response> updateStock(String sku, @RestQuery("stock") Integer stock) {
         return ProductInventory.findCurrentStock(sku)
               .onItem().call(currentStock -> {
-                  LOGGER.debugf("update stock for sku %s with current stock %d with %d", sku, currentStock, stock);
+                  Log.debugf("update stock for sku %s with current stock %d with %d", sku, currentStock, stock);
                   int newStock = currentStock + stock;
                   if (newStock < 0) {
                       int quantity = newStock*-1;
@@ -173,7 +172,7 @@ public class ProductInventoryResource {
     @Path("/line/{productLine}")
     @APIResponse(responseCode = "200", description = "The size", content = @Content(mediaType = TEXT_PLAIN, schema = @Schema(type = SchemaType.NUMBER )))
     public Uni<Long> productsCount(ProductLine productLine) {
-        LOGGER.debug("Count productLines");
+        Log.debug("Count productLines");
         return ProductInventory.count("productLine", productLine);
     }
 
