@@ -29,7 +29,6 @@ public class StatsService {
             .onItem().transformToMultiAndMerge(g ->
                   g.onItem().scan(OrderStat::new, this::incrementOrderCount))
             .onItem().transform(this::onNewStat)
-            .onOverflow().invoke(() -> Log.info("No me da la vida")).drop()
             .onFailure().retry().atMost(10);
    }
 

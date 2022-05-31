@@ -1,11 +1,11 @@
 package com.kineteco;
 
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.jboss.logging.Log;
 
 import javax.enterprise.event.Observes;
 import javax.ws.rs.core.Application;
@@ -16,8 +16,6 @@ import javax.ws.rs.core.Application;
 @Info(title = "Product Inventory Service", version = "1.0", description = "Operations handling Products Inventory.")
 )
 public class ProductInventoryServiceApp extends Application {
-
-   private static final Log Log = Log.getLog(ProductInventoryServiceApp.class);
 
    void onStart(@Observes StartupEvent ev) {
       Log.info("Product Inventory Service is starting Powered by Quarkus");
