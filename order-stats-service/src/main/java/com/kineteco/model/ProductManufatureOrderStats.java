@@ -4,6 +4,7 @@ public class ProductManufatureOrderStats {
    public String sku;
    public String category;
    public String name;
+   public int unitsAvailable;
    public int min = Integer.MAX_VALUE;
    public int max = Integer.MIN_VALUE;
    public int count;
@@ -19,7 +20,7 @@ public class ProductManufatureOrderStats {
       count++;
       sum += productManufatureOrder.quantity;
       avg = Math.round(sum / count);
-
+      unitsAvailable = productManufatureOrder.unitsAvailable;
       return this;
    }
 }

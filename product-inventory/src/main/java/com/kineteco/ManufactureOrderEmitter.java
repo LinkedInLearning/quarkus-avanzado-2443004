@@ -32,11 +32,16 @@ public class ManufactureOrderEmitter {
 
    public void sendProducts() {
       Log.info("Send products");
-      List<Record<String, Product>> records = ProductInventory.<ProductInventory>findAll().list().await()
-            .atMost(Duration.ofMinutes(1)).stream().map(p -> Record.of(p.sku, p.toProduct()))
-            .collect(Collectors.toList());
+      List<Record<String, Product>> records = productsFromDB();
       for (Record<String, Product> r: records) {
          productsEmitter.send(r);
       }
+   }
+
+   private List<Record<String, Product>> productsFromDB() {
+      return
+            ProductInventory.<ProductInventory>findAll().list().await()
+            .atMost(Duration.ofMinutes(1)).stream().map(p -> Record.of(p.sku, p.toProduct()))
+            .collect(Collectors.toList());
    }
 }
