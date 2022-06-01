@@ -116,4 +116,13 @@ public class ProductInventory extends PanacheEntity {
             .hash(sku, category, name, quantity, powerWatts, footprint, manufacturingCost, price, productLine,
                   targetConsumer, productAvailability, unitsAvailable);
    }
+
+   public Product toProduct() {
+      Product product = new Product();
+      product.sku = sku;
+      product.category = category;
+      product.name = name;
+      product.unitsAvailable = unitsAvailable;
+      return product;
+   }
 }

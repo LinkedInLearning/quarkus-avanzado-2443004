@@ -8,7 +8,7 @@ import io.quarkus.hibernate.reactive.panache.PanacheQuery;
 import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactional;
 import io.quarkus.logging.Log;
 import io.quarkus.panache.common.Sort;
-import io.smallrye.common.annotation.NonBlocking;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -46,14 +46,16 @@ public class ProductInventoryResource {
     @Inject
     ProductInventoryConfig productInventoryConfig;
 
-    @Inject ManufactureOrderEmitter manufactureOrderEmitter;
+    @Inject
+    ManufactureOrderEmitter manufactureOrderEmitter;
 
     @GET
     @Produces(TEXT_PLAIN)
     @Path("/health")
-    @NonBlocking
+    @Blocking
     public String health() {
         Log.debug("health called");
+        manufactureOrderEmitter.sendProducts();
         return productInventoryConfig.greetingMessage();
     }
 
