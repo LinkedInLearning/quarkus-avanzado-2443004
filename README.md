@@ -1,3 +1,8 @@
+En este video aprenderemos a realizar una agregacion de datos y a materializar los resultados en un Store de Kafka Streams para poder hacer una busqueda interactiva. Partimos de dos streams de eventos kafka fusionados con kafka streams. Te invito a ver el video sobre la fusion de los streams de este mismo curso. 
+
+Has podido hacer tus primeros pasos con las query interactivas de Kafka Streams y Quarkus. Recuerda que estamos trabajando en local y con unico nodo. 
+Te invito a profundizar sobre Kafka Streams y a aprender a realizar los cambios  necesarios para trabajar en cluster en la documentacion de Quarkus y de Kafka Streams.
+
 # Agregar y realizar query inteactivas de streams de datos con Kafka Streams en Quarkus
 
 * Dependencia
