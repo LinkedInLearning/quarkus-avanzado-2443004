@@ -1,4 +1,4 @@
-# Tratar varios flujos de datos con Kafka Streams en Quarkus
+# Agregar y realizar query inteactivas de streams de datos con Kafka Streams en Quarkus
 
 * Dependencia
 ```xml
