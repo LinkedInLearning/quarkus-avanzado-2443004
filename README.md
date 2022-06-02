@@ -11,7 +11,12 @@ de Quarkus.
 </dependency>
 ```
 
-* Primeros pasos con Qute el motor de plantillas de Quarkus
+* Creamos una plantilla en templates/customer.txt
+```<!DOCTYPE html>
+hola
+```
+
+* Creamos un endpoint
 
 ```java
 
@@ -21,14 +26,12 @@ de Quarkus.
     @GET
     @Path("/display/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public TemplateInstance get(@PathParam("id") Long id) {
-      Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
-      String name = customer.map(c -> c.name).orElse("Unknown");
-      return customers.data("name", name);
+    public TemplateInstance displayCustomer(@PathParam("id") Long id) {
+      return customers;
       }
 ```
 
-* En resources template creamos el customer.txt en `templates`
+* Modificamos template creamos el customer.txt en `templates`
 ```text
 {name}
 ```
@@ -47,20 +50,18 @@ de Quarkus.
 ```
 
 * Injectamos la template
-```html
-@Inject
-Template customers;
-```
-
-* Hacemos una template TypeSafe Dossier CustomerResource
-
 ```java
-   @CheckedTemplate
-    public static class Templates {
-        public static native TemplateInstance customers(String name);
-    }
+   @GET
+    @Path("/display/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public TemplateInstance displayCustomer(@PathParam("id") Long id) {
+      Optional<Customer> customer = Customer.<Customer>findByIdOptional(id);
+      String name = customer.map(c -> c.name).orElse("Unknown");
+      return customers.data("name", name);
+      }
 ```
 
+* La convertimos a HTML si queremos
 ```html
 <!DOCTYPE html>
 <html>
@@ -82,6 +83,15 @@ Template customers;
 </html>
 ```
 
+* Hacemos una template TypeSafe Dossier CustomerResource
+
+```java
+   @CheckedTemplate
+    public static class Templates {
+        public static native TemplateInstance customers(String name);
+    }
+```
+
 ```java
 @GET
 @Path("/display/{id}")
@@ -94,3 +104,5 @@ public TemplateInstance get(@PathParam("id") Long id) {
       return Templates.customers(name, email);
       }
 ```
+
+* Vemos que la tenemos que mover a "CustomerResource"/customers.html
