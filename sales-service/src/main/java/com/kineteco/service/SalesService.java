@@ -6,6 +6,7 @@ import com.kineteco.model.Customer;
 import com.kineteco.model.CustomerSale;
 import com.kineteco.model.ProductSale;
 import com.kineteco.rest.CustomerCommand;
+import io.micrometer.core.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 @ApplicationScoped
 public class SalesService {
 
+   @Timed(value = "create-customer-command")
    public CustomerSale createCustomerSale(CustomerCommand command, Product product) {
       Customer customer = Customer.findByCustomerId(command.getCustomerId())
             .orElseThrow(() -> new CustomerNotFoundException());

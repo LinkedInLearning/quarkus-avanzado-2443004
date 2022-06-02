@@ -3,6 +3,7 @@ package com.kineteco.rest;
 import com.kineteco.client.Product;
 import com.kineteco.fallbacks.SalesServiceFallbackHandler;
 import com.kineteco.model.CustomerSale;
+import com.kineteco.service.MetricsService;
 import com.kineteco.service.ProductInventoryService;
 import com.kineteco.service.SalesService;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
@@ -36,6 +37,9 @@ public class SalesResource {
     private static final Logger LOGGER = Logger.getLogger(SalesResource.class);
 
     @Inject
+    MetricsService metricsService;
+
+    @Inject
     SalesService salesService;
 
     @Inject
@@ -60,12 +64,13 @@ public class SalesResource {
     @Timeout(value = 100)
     @Retry(retryOn = TimeoutException.class, delay = 100, jitter = 25)
     @Fallback(value = SalesServiceFallbackHandler.class)
-    public Response available(@PathParam("sku") String sku, @QueryParam("units") Integer units) {
+    public Response available(@PathParam("sku") String sku,
+                              @QueryParam("units") Integer units) {
         LOGGER.debugf("available %s %d", sku, units);
         if (units == null) {
             throw new BadRequestException("units query parameter is mandatory");
         }
-
+        metricsService.count(units);
 
         return Response.ok(productInventoryService.getStock(sku) >= units).build();
     }
