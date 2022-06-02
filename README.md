@@ -4,7 +4,7 @@ reporting periódicos de datos con Quarkus.
 Te invito a que repases los vídeos de este mismo curso dedicados a las tareas 
 periodicas y a la introducción de Qute.
 
-En estos momentos estamos sacando el reporte periodico con el Log, pero podremos
+- En estos momentos estamos sacando el reporte periodico con el Log, pero podremos
 imaginar que guardamos el reporte en un sistema de ficheros o que lo enviamos
 por email.
 El lenguaje del motor de plantillas es bastante completo. No dudes en consultar
