@@ -5,19 +5,25 @@
     <title>Sales Reporting</title>
 </head>
 <body>
-<h1>Sales Reporting date</h1>
+<h1>Sales Reporting {date}</h1>
 <table>
     <tr>
         <td>Sku</td>
         <td>Name</td>
         <td>Price</td>
     </tr>
+    {#for sale in sales}
     <tr>
-        <td>sku</td>
-        <td>name</td>
-        <td><label>Popular</label> total
+        <td>{sale.sku}</td>
+        <td>{sale.name}</td>
+        <td>
+            {#if (sale.total > 500)}
+            <label>Popular</label>
+            {/if}
+            {sale.total}
         </td>
     </tr>
+    {/for}
 </table>
 </body>
 </html>
