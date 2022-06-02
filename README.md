@@ -47,12 +47,12 @@ public class MetricsService {
 * Probamos
 
 ```shell
-http  localhost:8280'/sales/KE180/availability?units=1
-http  localhost:8280'/sales/KE180/availability?units=1
-http  localhost:8280'/sales/KE180/availability?units=200
-http  localhost:8280'/sales/KE180/availability?units=1
-http  localhost:8280'/sales/KE180/availability?units=40
-http  localhost:8280'/sales/KE180/availability?units=4
+http  localhost:8280'/sales/KE180/availability?units=1'
+http  localhost:8280'/sales/KE180/availability?units=1'
+http  localhost:8280'/sales/KE180/availability?units=200'
+http  localhost:8280'/sales/KE180/availability?units=1'
+http  localhost:8280'/sales/KE180/availability?units=40'
+http  localhost:8280'/sales/KE180/availability?units=4'
 
 http localhost:8280/q/metrics | grep kineteco.stock.number  
 ```
