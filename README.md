@@ -1,4 +1,15 @@
 # Utilización de Qute para visualizar reportings periódicos con Quarkus
+- En este video aprenderemos a utilizar Qute para crear y poder visualizar
+reporting periódicos de datos con Quarkus.
+Te invito a que repases los vídeos de este mismo curso dedicados a las tareas 
+periodicas y a la introducción de Qute.
+
+- En estos momentos estamos sacando el reporte periodico con el Log, pero podremos
+- imaginar que guardamos el reporte en un sistema de ficheros o que lo enviamos
+- por email.
+El lenguaje del motor de plantillas es bastante completo. No dudes en consultar
+- la documentación de Quarkus para implementar tus propios casos de uso con
+- Qute y las tareas periódicas.
 
 * Añadimos dependencia `quarkus-resteasy-qute` en pom.xml de Sales Service
 ```xml
