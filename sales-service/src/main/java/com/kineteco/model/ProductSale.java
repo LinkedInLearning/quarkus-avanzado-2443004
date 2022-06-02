@@ -13,4 +13,9 @@ public class ProductSale extends PanacheEntity {
    public String sku;
    public String name;
    public BigDecimal total;
+
+   @Override
+   public String toString() {
+      return "ProductSale{" + "sku='" + sku + '\'' + ", name='" + name + '\'' + ", total=" + total + '}';
+   }
 }

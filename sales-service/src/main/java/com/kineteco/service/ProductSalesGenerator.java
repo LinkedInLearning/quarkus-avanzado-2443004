@@ -1,6 +1,7 @@
 package com.kineteco.service;
 
 import com.kineteco.model.ProductSale;
+import io.quarkus.logging.Log;
 import io.quarkus.scheduler.Scheduled;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,6 +15,7 @@ public class ProductSalesGenerator {
       List<ProductSale> productSales = ProductSale.listAll();
 
       // Generate Report
+      Log.info(productSales);
    }
 
 }
