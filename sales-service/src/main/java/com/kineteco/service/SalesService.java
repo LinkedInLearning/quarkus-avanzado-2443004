@@ -1,12 +1,11 @@
 package com.kineteco.service;
 
-import com.kineteco.graphql.CustomerNotFoundException;
-import com.kineteco.rest.CustomerCommand;
 import com.kineteco.client.Product;
+import com.kineteco.graphql.CustomerNotFoundException;
 import com.kineteco.model.Customer;
 import com.kineteco.model.CustomerSale;
 import com.kineteco.model.ProductSale;
-import io.micrometer.core.annotation.Timed;
+import com.kineteco.rest.CustomerCommand;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
