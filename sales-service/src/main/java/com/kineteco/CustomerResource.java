@@ -26,4 +26,17 @@ public class CustomerResource {
         return Customer.listAll();
     }
 
+    @GET
+    @Path("/display/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public TemplateInstance displayCustomer(@PathParam("id") Long id) {
+        Optional<Customer> customer = Customer.findByIdOptional(id);
+        String name = customer.map(c -> c.name).orElse("Unknown");
+        return Templates.customers(customer.get());
+    }
+
+    @CheckedTemplate
+    public static class Templates {
+        public static native TemplateInstance customers(Customer customer);
+    }
 }
