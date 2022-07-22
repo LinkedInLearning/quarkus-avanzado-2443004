@@ -6,8 +6,6 @@ Este es el repositorio del curso de LinkedIn Learning `[Quarkus Avanzado]`. El c
 
 Consulta el archivo Readme en la rama main para obtener instrucciones e información actualizadas.
 
-DESCRIPCIÓN DEL CURSO
-
 Profundiza en el desarrollo de microservicios con Quarkus, el framework de Java para crear aplicaciones nativas preparadas para Kubernetes. En este curso se te introducirán las nociones básicas de Quarkus que deben de conocerse, así como los conceptos indispensables para comprender los microservicios y desplegarlos con soltura. Además, también obtendrás instrucciones avanzadas para añadir funcionalidades más complejas a tus microservicios con Quarkus, todo de forma amena y práctica, guiándote paso a paso.
 
 ## Instrucciones
@@ -33,8 +31,8 @@ Las ramas están estructuradas para corresponder a los vídeos del curso. La con
 Echa un vistazo a mis otros cursos en [LinkedIn Learning](https://www.linkedin.com/learning/instructors/katia-aresti).
 
 [0]: # (Replace these placeholder URLs with actual course URLs)
-[lil-course-url]: https://www.linkedin.com/learning/building-a-graphql-project-with-react-js
-[lil-thumbnail-url]: https://cdn.lynda.com/course/2875095/2875095-1615224395432-16x9.jpg
+[lil-course-url]: https://www.linkedin.com/learning/quarkus-avanzado
+[lil-thumbnail-url]: https://media-exp1.licdn.com/dms/image/C560DAQHcbB8iMAcUUg/learning-public-crop_675_1200/0/1658405218833?e=1659078000&v=beta&t=SMEqlkKHo-uOdLGDXC4S2Htf9WmHiFM6UMiDXRNNLUw
 
 [1]: # (End of ES-Instruction ###############################################################################################)
 	
