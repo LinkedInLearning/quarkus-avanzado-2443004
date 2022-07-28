@@ -1,5 +1,10 @@
 # Utilización de anotaciones de caché con Quarkus
 
+La utilización de las anotacions con Infinispan es una funcionalidad en desarrollo que será incluida en la version 2.12 de
+Quarkus junto con Infinispan 13 o Infinispan 14 si la release de 14 es Final.
+El repositorio se actualizará con la version.
+La pull request: https://github.com/quarkusio/quarkus/pull/25300
+
 ```xml
 <dependency>
     <groupId>io.quarkus</groupId>
