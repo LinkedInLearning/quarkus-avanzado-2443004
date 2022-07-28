@@ -1,12 +1,21 @@
 # Quarkus Avanzado
 
-Este es el repositorio del curso de LinkedIn Learning `[Quarkus Avanzado]`. El curso completo está disponible en [LinkedIn Learning][lil-course-url].
+Este es el repositorio del curso de LinkedIn Learning `[Quarkus Avanzado]`. 
+El curso completo está disponible en [LinkedIn Learning][lil-course-url].
 
 ![Nombre completo del curso][lil-thumbnail-url] 
 
 Consulta el archivo Readme en la rama main para obtener instrucciones e información actualizadas.
 
-Profundiza en el desarrollo de microservicios con Quarkus, el framework de Java para crear aplicaciones nativas preparadas para Kubernetes. En este curso se te introducirán las nociones básicas de Quarkus que deben de conocerse, así como los conceptos indispensables para comprender los microservicios y desplegarlos con soltura. Además, también obtendrás instrucciones avanzadas para añadir funcionalidades más complejas a tus microservicios con Quarkus, todo de forma amena y práctica, guiándote paso a paso.
+Profundiza en Quarkus, el framework de Java para crear aplicaciones nativas preparadas para Kubernetes.
+El objetivo del curso es continuar profundizando en el desarrollo de Microservicios con Quarkus. 
+Las nociones básicas de Quarkus deben de conocerse, así como los conceptos abordados en los primeros capítulos de Quarkus Esencial.
+Continuaremos sobre la base de código de Quarkus Esencial para añadir funcionalidades más avanzadas.
+
+Se abordan utilidades genéricas de Quarkus, conceptos avanzados de la programación reactiva, 
+los sistemas de cachés distribuídas integrados con Quarkus que te permitirán incrementar el rendimiento de las aplicaciones, 
+alternativas a REST para la creación de APIs y comunicación entre servicios así cómo métricas y 
+trazas distribuídas para la observabilidad.
 
 ## Instrucciones
 
@@ -19,10 +28,14 @@ Las ramas están estructuradas para corresponder a los vídeos del curso. La con
 ## Instalación
 
 1. Para utilizar estos archivos de ejercicios, debes tener descargado lo siguiente:
-   - [software]
+   - Java 11 o superior 
+   - Git
+   - Un editor
+   - Docker para los servicios de desarrollo de Quarkus
+   - Minikube para despliegues en Kubernetes
 
 2. Clona este repositorio en tu máquina local usando la Terminal (macOS) o CMD (Windows), o una herramienta GUI como SourceTree.
-3. [Instrucciones específicas del curso].
+
 
 ### Docente
 
