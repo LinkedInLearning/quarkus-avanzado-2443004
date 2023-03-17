@@ -1,6 +1,6 @@
 # Quarkus Avanzado
 
-Este es el repositorio del curso de LinkedIn Learning `[Quarkus Avanzado]`. 
+Este es el repositorio del curso de LinkedIn Learning `Quarkus Avanzado`. 
 El curso completo está disponible en [LinkedIn Learning][lil-course-url].
 
 ![Nombre completo del curso][lil-thumbnail-url] 
@@ -45,7 +45,4 @@ Echa un vistazo a mis otros cursos en [LinkedIn Learning](https://www.linkedin.c
 
 [0]: # (Replace these placeholder URLs with actual course URLs)
 [lil-course-url]: https://www.linkedin.com/learning/quarkus-avanzado
-[lil-thumbnail-url]: https://media-exp1.licdn.com/dms/image/C560DAQHcbB8iMAcUUg/learning-public-crop_675_1200/0/1658405218833?e=1659078000&v=beta&t=SMEqlkKHo-uOdLGDXC4S2Htf9WmHiFM6UMiDXRNNLUw
-
-[1]: # (End of ES-Instruction ###############################################################################################)
-	
+[lil-thumbnail-url]: https://cdn.lynda.com/course/2443004/2443004-1658404620942-16x9.jpg
